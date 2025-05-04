@@ -55,14 +55,31 @@ const DashBoard = () => {
                 <h2 className="text-2xl font-semibold text-gray-700 mb-6">Summary</h2>
 
                 <div className="space-y-4">
-                <div className="flex justify-between text-gray-700 font-medium">
-                    <p>Total Current Calories:</p>
-                    <p>{data.length > 1 ? `${totalCal.toFixed(2)} kcal` : "No calories yet..."}</p>
-                </div>
-                <div className="flex justify-between text-gray-700 font-medium">
-                    <p>Total Target Calories:</p>
-                    <p>{/* Add logic for user’s target */}2000 kcal</p>
-                </div>
+                    {/* Totals */}
+                    <div className="flex justify-between text-gray-700 font-medium">
+                        <p>Total Current Calories:</p>
+                        <p>{data.length > 0 ? `${totalCal.toFixed(2)} kcal` : "No calories yet..."}</p>
+                    </div>
+
+                    <div className="flex justify-between text-gray-700 font-medium">
+                        <p>Total Target Calories:</p>
+                        <p>2000 kcal</p>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="w-full mt-4">
+                    <div className="h-4 bg-gray-300 rounded-full overflow-hidden">
+                        <div
+                        className={`h-full bg-green-500 transition-all duration-500`}
+                        style={{
+                            width: `${Math.min((totalCal / 5000) * 100, 100)}%`,
+                        }}
+                        ></div>
+                    </div>
+                    <p className="text-right text-sm text-gray-600 mt-1">
+                        {Math.min((totalCal / 5000) * 100, 100).toFixed(1)}% of your goal
+                    </p>
+                    </div>
                 </div>
             </section>
         </div>
