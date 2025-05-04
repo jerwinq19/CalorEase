@@ -42,54 +42,36 @@ const RecipeCard = ({name, image, id, idx}) => {
     }
 
     const AddtoCalorie = async (id) => {
-        const cacheKey = `cachedkey_${id}`;
-        const cachedRecipe = localStorage.getItem(cacheKey);
-        let parsedRecipeData = null
-
+        
         // fetch the data
-        if (cachedRecipe) {
-            parsedRecipeData = JSON.parse(cachedRecipe).data;
-        } else {
-            try {
-                const response = await axios.get(`https://api.spoonacular.com/recipes/${id}/information?includeNutrition=true&apiKey=${process.env.REACT_APP_API_KEY}`)
-                parsedRecipeData = response.data
+        try {
+            const response = await axios.get(`https://api.spoonacular.com/recipes/${id}/information?includeNutrition=true&apiKey=${process.env.REACT_APP_API_KEY}`);
 
-                const dataToCache = {
-                    data: response.data,
-                    fetchedAt: Date.now()
-                };
-                localStorage.setItem(cacheKey, JSON.stringify(dataToCache));
+            const mealCalorie = response.data
 
-            } catch (err) {
-                console.error(`Failed to fetch api data... ${err}`)
+            const storedCalorie = JSON.parse(localStorage.getItem('calorieAdded')) || [];
+
+            const checkIfExist = storedCalorie.some(item => item.id === id)
+
+            if (checkIfExist) {
+                return alert("meron nang laman nan... ")
             }
-        }
-        
-        const caloricBreakdown = parsedRecipeData.nutrition.caloricBreakdown;
-    
-        const FoodNutritionData = {
-            id: parsedRecipeData.id,
-            name: parsedRecipeData.title,
-            protein: caloricBreakdown.percentProtein,
-            fat: caloricBreakdown.percentFat,
-            carbs: caloricBreakdown.percentCarbs,
-        };
-    
-        console.log(FoodNutritionData);
-    
-        const CalorieDatas = localStorage.getItem("CalorieData");
-        const parsedCalorieData = CalorieDatas ? JSON.parse(CalorieDatas) : [];
-        
-        const checkAlreadyExist = parsedCalorieData.some(item => item.id === FoodNutritionData.id)
 
-        if (checkAlreadyExist) {
-            console.log("This item already exist in your db", checkAlreadyExist)
-            return
+            const newMeal = {
+                id: mealCalorie.id,
+                name: mealCalorie.title,
+                kcal: mealCalorie.nutrition.nutrients[0].amount
+            }
+            storedCalorie.push(newMeal)
+
+            localStorage.setItem('calorieAdded', JSON.stringify(storedCalorie))
+
+            alert("calorie added...")
+            
+        } catch (err) {
+            console.error(`Failed to fetch api data... ${err}`)
         }
 
-        parsedCalorieData.push(FoodNutritionData);
-        localStorage.setItem("CalorieData", JSON.stringify(parsedCalorieData));
-        alert("added to my calorie...")
     };
     
 
@@ -112,7 +94,7 @@ const RecipeCard = ({name, image, id, idx}) => {
                     <h2 className="text-xl mb-2 text-start">{name}</h2>
                     
                     <span className="flex justify-between">
-                        <button className="bg-blue-500 text-white px-1 py-2 rounded">
+                        <button className="bg-blue-500 text-white px-1 py-2 rounded" onClick={() => AddtoCalorie(id)}>
                             Add to Tracker ✅
                         </button>
 
