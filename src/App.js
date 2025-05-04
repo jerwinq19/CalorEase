@@ -1,6 +1,6 @@
 import './App.css';
 import { Route, Routes, Link } from 'react-router-dom';
-import SearchRecipe from './components/RecipeSearch';
+import SearchRecipe from './components/mealSearch';
 import LoginPage from './components/LoginPage';
 import DashBoard from './components/Dashboard';
 import NotFound from './components/NotFound';

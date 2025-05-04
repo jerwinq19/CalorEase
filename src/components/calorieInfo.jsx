@@ -3,7 +3,7 @@ import { useState } from "react";
 import '../style/modal.css'
 
 
-const RecipeCard = ({name, image, id, idx, dishType}) => {
+const RecipeCard = ({name, image, id, idx}) => {
 
     const [showModal, setShowModal] = useState(false);
     const [recipeInfo, setRecipeInfo] = useState(null);
@@ -91,11 +91,6 @@ const RecipeCard = ({name, image, id, idx, dishType}) => {
         alert("added to my calorie...")
     };
     
-    const DecodeHtml = (html) => {
-        const txt = document.createElement("textarea")
-        txt.innerHTML = html
-        return txt.value
-    }
 
     // return
     return(
@@ -115,14 +110,12 @@ const RecipeCard = ({name, image, id, idx, dishType}) => {
                 <div className="flex flex-col justify-between flex-grow px-5 py-4">
                     <h2 className="text-xl mb-2 text-start">{name}</h2>
                     
-                    <h2 className="text-lg">{dishType ? `Dish type: ${dishType}` : ""}</h2>
-
                     <span className="flex justify-between">
-                        <button className="bg-blue-400 text-white px-1 py-2 rounded">
+                        <button className="bg-blue-500 text-white px-1 py-2 rounded">
                             Add to Tracker ✅
                         </button>
 
-                        <button className="bg-green-400 text-white px-1 py-2 rounded" onClick={() => ViewRecipe(id)}>
+                        <button className="bg-green-500 text-white px-1 py-2 rounded" onClick={() => ViewRecipe(id)}>
                             View 🔎
                         </button>
                     </span>
@@ -141,37 +134,8 @@ const RecipeCard = ({name, image, id, idx, dishType}) => {
                             <img src={recipeInfo.image} alt={recipeInfo.title} className="w-fit h-auto rounded-lg shadow-md"/>
                         </div>
 
-                        <div className="flex flex-col gap-5">
-                            <h1 className="text-2xl font-bold">{recipeInfo.title}</h1>
-                            
-                            <span className="flex gap-3 items-center">
-                                {recipeInfo.dishTypes.map((item, idx) => (
-                                    <h2 key={idx} className="bg-green-500 text-white p-1.5 rounded-md font-bold">
-                                        {item}
-                                    </h2>
-                                ))}
-                            </span>
-                            
-                            <span>
-                                <h1 className="text-xl font-bold mb-2">Instructions</h1>
-                                <ul className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-2">
-                                    {recipeInfo.analyzedInstructions[0].steps.map((item, idx) => (
-                                        <li key={idx} className="text-sm font-semibold whitespace-normal">Step: {item.number} {item.step}</li>
-                                    ))}
-                                </ul>
-                            </span>
-                            
-                            <span>
-                                <h1 className="text-xl font-bold mb-2">Instructions</h1>
+                        <h1 className="text-2xl font-bold">{recipeInfo.title}</h1>
 
-                                <ul className="list-disc list-inside space-y-1">
-                                    {recipeInfo.extendedIngredients.map((item, idx) => (
-                                        <li className="text-sm font-semibold break-words" key={idx}>{item.original}</li>
-                                    ))}
-                                </ul>
-                            </span>
-                            
-                        </div>
                     </div>
                 </div>
             )}

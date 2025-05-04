@@ -13,7 +13,7 @@
 
 .modal-content {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
     gap: 10px;
     background-color: white;
     height: auto;
