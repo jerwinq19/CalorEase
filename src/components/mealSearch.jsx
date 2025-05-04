@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import '../style/recipeSearchStyle.css'
 import axios from "axios";
-import RecipeCard from "./RecipeCard";
+import RecipeCard from "./calorieInfo";
 
 
 const PaginationMeals = ({totalPost, postPerPage, setCurrentPage}) => {
@@ -134,7 +134,7 @@ const SearchRecipe = () => {
             {Recipes && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-10">
                     {currentPost.map((Meal,idx) => (
-                        <RecipeCard image={Meal.image} name={Meal.title} key={Meal.id} id={Meal.id} idx={idx} summary={Meal.summary} dishType={Meal.dishTypes ? Meal.dishTypes[0] : null}/>
+                        <RecipeCard image={Meal.image} name={Meal.title} key={Meal.id} id={Meal.id} idx={idx} />
                     ))}
                 </div>
             )}
