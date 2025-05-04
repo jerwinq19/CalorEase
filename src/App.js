@@ -8,7 +8,7 @@ import RegisterPage from './components/RegisterPage';
 
 
 function App() {
-
+  //LANDING PAGE
   return (
     <div className="App">
       <nav className='flex justify-between items-center bg-green-500 p-5'>
