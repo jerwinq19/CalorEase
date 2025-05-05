@@ -5,6 +5,7 @@ import LoginPage from './components/LoginPage';
 import DashBoard from './components/Dashboard';
 import NotFound from './components/NotFound';
 import RegisterPage from './components/RegisterPage';
+import UpdateHealthGoal from './components/UpdateHealthGoal';
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <span className='flex gap-3'>
           <Link to="/dashboard" className='bg-red-500 p-2'>Acount</Link>
           <Link to="/login" className='bg-red-500 p-2'>Login</Link>
+          <Link to="/updategoal" className='bg-red-500 p-2'>Update Goal</Link>
         </span>
       </nav>
 
@@ -23,6 +25,7 @@ function App() {
         <Route path='/' element={<SearchRecipe />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/dashboard' element={<DashBoard />} />
+        <Route path='/updategoal' element={<UpdateHealthGoal />} />
         <Route path='/register' element={<RegisterPage/>}/>
         <Route path='*' element={<NotFound/>} />
       </Routes>
@@ -31,3 +34,4 @@ function App() {
 }
 
 export default App;
+
