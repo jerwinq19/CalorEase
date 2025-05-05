@@ -1,34 +1,53 @@
 import { useEffect, useState } from "react";
-
+import Modal from "../modal/modal";
+import { nanoid } from "nanoid";
 
 const DashBoard = () => {
+    const [change, isChange] = useState(false)
     const [data, setData] = useState([])
     const [totalCal, setTotalCal] = useState(0)
+    const [showModal, setShowModal] = useState(false)
+    
+    const [ingredients, setIngredients] = useState("")
 
     useEffect(() => {
         const fetchCalories = async () => {
             const calorieData = await JSON.parse(localStorage.getItem('calorieAdded')) || []
             const sumCalorie = calorieData.reduce((initVal, currVal) => initVal + currVal.kcal, 0)
             setTotalCal(sumCalorie)
-            setData(prev => [...prev, ...calorieData])
-            
+            setData([...calorieData])
         };
         fetchCalories()
-    },[])
+    },[change])
+
+    const dummyData = async () => {
+
+        const dummyData = {
+            id: nanoid(),
+            name: "dasdsa",
+            kcal: 100,
+        }
+        const calorieData = await JSON.parse(localStorage.getItem('calorieAdded')) || []
+        calorieData.push(dummyData)
+        localStorage.setItem('calorieAdded', JSON.stringify(calorieData))
+
+        isChange(prev => !prev) // toggles use state
+    }
 
 
     return(
         <div className="p-5 max-w-6xl mx-auto">
             {/* Page Title */}
-            <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Dashboard</h1>
+            <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Dashboard</h1> 
 
             {/* Daily Log Section */}
             <section className="bg-slate-100 p-6 rounded-xl shadow mb-8">
                 <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-semibold text-gray-700">Daily Log</h2>
-                <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition">
-                    Add Meals
-                </button>
+                    <h2 className="text-2xl font-semibold text-gray-700">Daily Log</h2>
+
+                    <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition"  onClick={() => setShowModal(true)}>
+                        Add Meals
+                    </button>
                 </div>
 
                 <div className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent pb-2">
@@ -82,6 +101,35 @@ const DashBoard = () => {
                     </div>
                 </div>
             </section>
+
+            {showModal && (
+                <Modal setShowModal={setShowModal}>
+                <div className="space-y-4">
+                    <h2 className="text-xl font-bold text-gray-800">Add a New Meal</h2>
+                
+                    <input
+                    type="text"
+                    placeholder="Enter meal name..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                
+                    <textarea
+                    placeholder="Enter meal ingredients... eg. 2 Boiled eggs and 1 cup of Rice"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg resize-none h-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    ></textarea>
+                
+                    <div className="flex justify-end">
+                    <button
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                        onClick={dummyData}
+                    >
+                        Submit
+                    </button>
+                    </div>
+                </div>  
+            </Modal>
+            )}
+
         </div>
     );
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import '../style/modal.css'
-
+import Modal from "../modal/modal";
 
 const RecipeCard = ({name, image, id, idx}) => {
 
@@ -106,20 +106,24 @@ const RecipeCard = ({name, image, id, idx}) => {
             </div>
 
             {showModal && recipeInfo && (
-                <div className="modal-overlay">
-                    {/* close btn */}
-                    <button className="close text-2xl text-white" onClick={() => setShowModal(false)}>X</button> 
-
-                    <div className="modal-content">
-                        {/* modal content */}
-                        <div className="max-w-xl mx-auto p-4">
-                            <img src={recipeInfo.image} alt={recipeInfo.title} className="w-fit h-auto rounded-lg shadow-md"/>
-                        </div>
-
-                        <h1 className="text-2xl font-bold">{recipeInfo.title}</h1>
-
-                    </div>
-                </div>
+                <Modal setShowModal={setShowModal}>
+                
+                    {/* Modal Content */}
+                    <img
+                        src={recipeInfo.image}
+                        alt={recipeInfo.title}
+                        className="w-full h-48 object-cover rounded-lg mb-4"
+                    />
+                
+                    <h1 className="text-2xl font-bold mb-2">{recipeInfo.title}</h1>
+                    <h2 className="text-md font-semibold mb-2">Kcal: {recipeInfo.nutrition.nutrients[0].amount}</h2>
+                    <h2 className="font-semibold text-lg mb-1">Ingredients:</h2>
+                    <ul className="list-disc list-inside space-y-1 text-gray-700">
+                        {recipeInfo.extendedIngredients.map((info, idx) => (
+                        <li key={idx}>{info.original}</li>
+                        ))}
+                    </ul>
+                </Modal>
             )}
         </div>
         
