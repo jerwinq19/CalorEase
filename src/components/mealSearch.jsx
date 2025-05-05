@@ -1,3 +1,4 @@
+//FOOD SEARCH PAGE
 import { useState, useEffect } from "react";
 import '../style/recipeSearchStyle.css'
 import axios from "axios";
