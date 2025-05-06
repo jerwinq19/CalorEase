@@ -6,6 +6,7 @@ import DashBoard from './components/Dashboard';
 import NotFound from './components/NotFound';
 import RegisterPage from './components/RegisterPage';
 import UpdateHealthGoal from './components/UpdateHealthGoal';
+import LandingPage from './components/LandingPage';
 
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
           <Link to="/updategoal" className='bg-red-500 p-2'>Update Goal</Link>
         </span>
       </nav>
-
+      <LandingPage />
       <Routes>
         <Route path='/' element={<SearchRecipe />} />
         <Route path='/login' element={<LoginPage />} />
