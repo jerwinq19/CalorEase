@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import '../style/recipeSearchStyle.css'
 import axios from "axios";
 import RecipeCard from "./calorieInfo";
-
+import MyNavbar from "./navBar";
 
 const PaginationMeals = ({totalPost, postPerPage, setCurrentPage}) => {
     let pages = []
@@ -115,34 +115,39 @@ const SearchRecipe = () => {
     }, [])
     
     return (
-        <div className="m-10">
-            {/* search function */}
-            <span className="flex">
-                <input 
-                type="text"
-                value={SearchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                className="p-3 bg-gray-100 flex-1 outline-none"
-                placeholder="Search Meal..."
-                />
+        <>
+            <MyNavbar />
+            <div className="m-10">
+                {/* search function */}
+                <span className="flex">
+                    <input 
+                    type="text"
+                    value={SearchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    className="p-3 bg-gray-100 flex-1 outline-none"
+                    placeholder="Search Meal..."
+                    />
 
-                <button className="p-3 bg-green-400 text-white"
-                onClick={() => FetchRecipe(SearchInput)}>
-                    Search
-                </button>
-            </span>
+                    <button className="p-3 bg-green-400 text-white"
+                    onClick={() => FetchRecipe(SearchInput)}>
+                        Search
+                    </button>
+                </span>
 
-            {Recipes && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-10">
-                    {currentPost.map((Meal,idx) => (
-                        <RecipeCard image={Meal.image} name={Meal.title} key={Meal.id} id={Meal.id} idx={idx} />
-                    ))}
-                </div>
-            )}
+                {Recipes && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-10">
+                        {currentPost.map((Meal,idx) => (
+                            <RecipeCard image={Meal.image} name={Meal.title} key={Meal.id} id={Meal.id} idx={idx} />
+                        ))}
+                    </div>
+                )}
 
-            <PaginationMeals totalPost={Recipes.length} postPerPage={postPerPage} setCurrentPage={setCurrentPage}/>
+                <PaginationMeals totalPost={Recipes.length} postPerPage={postPerPage} setCurrentPage={setCurrentPage}/>
 
-        </div>
+            </div>
+            
+        
+        </>
     );
 };
 

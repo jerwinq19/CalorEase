@@ -13,18 +13,10 @@ function App() {
   //LANDING PAGE
   return (
     <div className="App">
-      <nav className='flex justify-between items-center bg-green-500 p-5'>
-        <Link to="/" className='bg-red-500 p-2'>Home</Link>
-        <span className='flex gap-3'>
-          <Link to="/dashboard" className='bg-red-500 p-2'>Acount</Link>
-          <Link to="/login" className='bg-red-500 p-2'>Login</Link>
-          <Link to="/updategoal" className='bg-red-500 p-2'>Update Goal</Link>
-        </span>
-      </nav>
-      <LandingPage />
+      {/* <LandingPage /> */}
       <Routes>
-        <Route path='/' element={<SearchRecipe />} />
-        <Route path='/login' element={<LoginPage />} />
+        <Route path='/' element={<LoginPage />} />
+        <Route path='/search' element={<SearchRecipe />} />
         <Route path='/dashboard' element={<DashBoard />} />
         <Route path='/updategoal' element={<UpdateHealthGoal />} />
         <Route path='/register' element={<RegisterPage/>}/>

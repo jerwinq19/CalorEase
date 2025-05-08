@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import '../style/modal.css'
 import Modal from "../modal/modal";
+import Swal from "sweetalert2";
 
 const RecipeCard = ({name, image, id, idx}) => {
 
@@ -42,36 +43,59 @@ const RecipeCard = ({name, image, id, idx}) => {
     }
 
     const AddtoCalorie = async (id) => {
-        
-        // fetch the data
         try {
-            const response = await axios.get(`https://api.spoonacular.com/recipes/${id}/information?includeNutrition=true&apiKey=${process.env.REACT_APP_API_KEY}`);
-
-            const mealCalorie = response.data
-
-            const storedCalorie = JSON.parse(localStorage.getItem('calorieAdded')) || [];
-
-            const checkIfExist = storedCalorie.some(item => item.id === id)
-
-            if (checkIfExist) {
-                return alert("meron nang laman nan... ")
-            }
-
-            const newMeal = {
-                id: mealCalorie.id,
-                name: mealCalorie.title,
-                kcal: mealCalorie.nutrition.nutrients[0].amount
-            }
-            storedCalorie.push(newMeal)
-
-            localStorage.setItem('calorieAdded', JSON.stringify(storedCalorie))
-
-            alert("calorie added...")
+            const response = await axios.get(
+            `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=true&apiKey=${process.env.REACT_APP_API_KEY}`
+            );
+        
+            const mealCalorie = response.data;
+        
+            const allAccounts = JSON.parse(localStorage.getItem('Accounts')) || [];
+            const currentUserId = localStorage.getItem('CurrentUserId');
+        
+            const currentUserIndex = allAccounts.findIndex(user => user.id === currentUserId);
+        
+            if (currentUserIndex !== -1) {
+                const currentUser = allAccounts[currentUserIndex];
             
-        } catch (err) {
-            console.error(`Failed to fetch api data... ${err}`)
+                // Check if meal already exists
+                const alreadyAdded = currentUser.eatenFood.some(meal => meal.id === mealCalorie.id);
+            
+                if (alreadyAdded) {
+                    Swal.fire({
+                    title: "Already Added!",
+                    text: `${mealCalorie.title} is already in your list.`,
+                    icon: "info"
+                    });
+                    return;
+                }
+            
+                // If not added yet, push the new meal
+                const newMeal = {
+                    id: mealCalorie.id,
+                    name: mealCalorie.title,
+                    kcal: mealCalorie.nutrition.nutrients[0].amount
+                };
+            
+                currentUser.eatenFood.push(newMeal);
+            
+                // Save back to localStorage
+                localStorage.setItem('Accounts', JSON.stringify(allAccounts));
+            
+                Swal.fire({
+                    title: "Calorie Added!",
+                    text: `${mealCalorie.title} is added!`,
+                    icon: "success"
+                });
+            }
+        } catch (error) {
+            console.error("Error adding calorie:", error);
+            Swal.fire({
+            title: "Error",
+            text: "Something went wrong while adding the meal.",
+            icon: "error"
+            });
         }
-
     };
     
 
