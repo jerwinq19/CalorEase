@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import MyNavbar from "./navBar";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { Link } from "react-router-dom"
+import SmartNutrition from "./SmartNutritionGuide";
 
 
 const DashBoard = () => {
@@ -122,6 +124,14 @@ const DashBoard = () => {
         });
     };
         
+    const onUpdateGoal = () => {
+     
+    } 
+    // PANG UPDATE NG CALORIE GOAL HIJO
+
+    const learnMore = () => {
+        
+    }
 
     return(
         <>
@@ -190,6 +200,27 @@ const DashBoard = () => {
                             {Math.min((totalCal / maxCal) * 100, 100).toFixed(1)}% of your goal
                         </p>
                         </div>
+                    </div>
+                </section>
+                
+                {/* CALORIE GOAL SECTION */}
+                <section className="bg-slate-100 p-6 rounded-xl shadow mb-8">
+                    <h2 className="text-2xl font-semibold text-gray-700 mb-4">Calorie Goal</h2>
+
+                    <p className="text-gray-600 mb-6">
+                        Your current goal is <span className="font-semibold text-gray-800">{maxCal} kcal</span>
+                    </p>
+
+                    <div className="flex gap-4">
+                        <button
+                        onClick={onUpdateGoal}
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition"
+                        >
+                        Update Goal
+                        </button>
+                        <Link to="/smartnutrition" 
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition">
+                        Learn more about your nutrition</Link>
                     </div>
                 </section>
 
