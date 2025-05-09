@@ -11,9 +11,10 @@ const RegisterPage = () => {
     const [timeFrame, setTimeFrame] = useState(0)
     const [activityLevel, setActivityLevel] = useState("")
     const [dietPref, setDietPref] = useState("")
+    const [gender, setGender] = useState("")
 
     const handleRegister = () => {
-        if (!username || !password || !weight || !targetWeight || !timeFrame || !activityLevel || !dietPref) {
+        if (!username || !password || !weight || !targetWeight || !timeFrame || !activityLevel || !dietPref || !gender) {
             return Swal.fire({
                 title: "Missing Input",
                 text: "Please complete all fields before proceeding.",
@@ -31,6 +32,7 @@ const RegisterPage = () => {
             timeFrame,
             activityLevel,
             dietPref,
+            gender,
         };
 
         const accounts = JSON.parse(localStorage.getItem("Accounts")) || [];
@@ -44,6 +46,7 @@ const RegisterPage = () => {
         setTimeFrame(0);
         setActivityLevel("");
         setDietPref("");
+        setGender("");
 
         Swal.fire({
             title: "Registered",
@@ -144,6 +147,20 @@ const RegisterPage = () => {
                             <option value="No preference">No preference</option>
                         </select>
                     </label>
+
+                    <label className="text-sm font-medium md:col-span-2">
+                        Gender
+                        <select
+                            value={gender}
+                            onChange={(e) => setGender(e.target.value)}
+                            className="mt-1 p-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-green-400"
+                        >
+                            <option value="">Choose your gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </label>
+
                 </div>
 
                 <div className="mt-6">

@@ -3,31 +3,110 @@ import Modal from "../modal/modal";
 import { useNavigate } from "react-router-dom";
 import MyNavbar from "./navBar";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 
 const DashBoard = () => {
     const [change, isChange] = useState(false)
     const [data, setData] = useState([])
     const [totalCal, setTotalCal] = useState(0)
+    const [maxCal, setMaxCalorie] = useState(0)
     const [showModal, setShowModal] = useState(false)
+    const [RecoFood, setRecoFood] = useState([])
 
     const navigate = useNavigate()
 
     useEffect(() => {
         const fetchCalories = async () => {
-            const allAccounts = JSON.parse(localStorage.getItem('Accounts')) || [];
-            const currentUserId = localStorage.getItem('CurrentUserId');
+            try {
+                const allAccounts = JSON.parse(localStorage.getItem('Accounts')) || [];
+                const currentUserId = localStorage.getItem('CurrentUserId');
+    
+                const currentUserIndex = allAccounts.findIndex(user => user.id === currentUserId);
+                const currentUserData = allAccounts[currentUserIndex];
+    
+                console.log(currentUserData);
+    
+                const maxCalorie = calculateMaxCalorie({
+                    weight: Number(currentUserData.weight),
+                    targetWeight: Number(currentUserData.targetWeight),
+                    timeframe: Number(currentUserData.timeFrame),
+                    activity: currentUserData.activityLevel,
+                    age: 20,
+                    height: 172.72,
+                    gender: currentUserData.gender.toLowerCase()
+                });
 
-            const currentUserIndex = allAccounts.findIndex(user => user.id === currentUserId);
-            const eatenFood = allAccounts[currentUserIndex].eatenFood
+                console.log(maxCalorie)
 
-            const sumCal = eatenFood.reduce((x,y) => x + y.kcal, 0)
-            setTotalCal(sumCal)
-            setData(eatenFood)
-
+                const sampleData = await fetchRecomended({ diet: currentUserData.dietPref, maxcal: maxCalorie });
+                setRecoFood(sampleData)
+                console.log(sampleData)
+                
+                const sumCal = currentUserData.eatenFood.reduce((x, y) => x + y.kcal, 0);
+                setTotalCal(sumCal);
+                setMaxCalorie(maxCalorie)
+                setData(currentUserData.eatenFood);
+            } catch (error) {
+                console.error("Error in fetchCalories:", error);
+            }
         };
-        fetchCalories()
-    },[change])
+    
+        fetchCalories();
+    }, [change]);
+    
+    const fetchRecomended = async ({ diet, maxcal }) => {
+        try {
+            const response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch`, {
+                params: {
+                diet,
+                number: 6,
+                apiKey: process.env.REACT_APP_API_KEY,
+                addRecipeNutrition: true,
+                maxCalories: maxcal
+                }
+            });
+            
+            return response.data.results;
+        } catch (err) {
+            Swal.fire({
+                title: "Error fetching API Data",
+                text: "Error fetching API data...",
+                icon: "error"
+            });
+        }
+    };
+
+    const calculateMaxCalorie = ({ weight, targetWeight, timeframe, activity, age, height, gender }) => {
+        const activityFactors = {
+            sedentary: 1.2,
+            lightly_active: 1.375,
+            moderately_active: 1.55,
+            very_active: 1.725,
+            extra_active: 1.9
+        };
+    
+        const key = activity.replace(" ", "_").toLowerCase();
+        const factor = activityFactors[key];
+    
+        if (!factor || isNaN(weight) || isNaN(targetWeight) || isNaN(timeframe) || isNaN(age) || isNaN(height)) {
+            return NaN;
+        }
+    
+        const bmr = gender === 'male'
+            ? 10 * weight + 6.25 * height - 5 * age + 5
+            : 10 * weight + 6.25 * height - 5 * age - 161;
+    
+        const tdee = bmr * factor;
+        const weightDiff = targetWeight - weight;
+        const dailyChange = (7700 * Math.abs(weightDiff)) / (timeframe * 7); // convert weeks to days
+    
+        const isGaining = weightDiff > 0;
+        const adjustedCalories = isGaining ? tdee + dailyChange : tdee - dailyChange;
+    
+        return Math.round(adjustedCalories);
+    };
+    
 
     const handleLogout = () => {
         localStorage.removeItem("CurrentUserId"); // or "CurrentUsername" depending on what you used
@@ -42,8 +121,7 @@ const DashBoard = () => {
             icon: "success"
         });
     };
-    
-    
+        
 
     return(
         <>
@@ -95,7 +173,7 @@ const DashBoard = () => {
 
                         <div className="flex justify-between text-gray-700 font-medium">
                             <p>Total Target Calories:</p>
-                            <p>2000 kcal</p>
+                            <p>{maxCal}kcal</p>
                         </div>
 
                         {/* Progress Bar */}
@@ -104,21 +182,48 @@ const DashBoard = () => {
                             <div
                             className={`h-full bg-green-500 transition-all duration-500`}
                             style={{
-                                width: `${Math.min((totalCal / 5000) * 100, 100)}%`,
+                                width: `${Math.min((totalCal / maxCal) * 100, 100)}%`,
                             }}
                             ></div>
                         </div>
                         <p className="text-right text-sm text-gray-600 mt-1">
-                            {Math.min((totalCal / 5000) * 100, 100).toFixed(1)}% of your goal
+                            {Math.min((totalCal / maxCal) * 100, 100).toFixed(1)}% of your goal
                         </p>
                         </div>
                     </div>
                 </section>
 
-                <section className="bg-slate-100 p-6 rounded-xl shadow mb-8">
-                        <h1 className="text-2xl font-semibold text-gray-700">Recomended Food you...</h1>
-                        <p>bukas ko na to tapusin....</p>
-                </section>
+                <section className="bg-slate-100 p-4 rounded-xl shadow mb-8">
+                    <h1 className="text-xl font-semibold text-gray-700 mb-4">Recommended for You</h1>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {RecoFood.length > 0 ? (
+                        RecoFood.map((item, idx) => {
+                            const calories = item.nutrition?.nutrients?.find(n => n.name === "Calories")?.amount;
+
+                            return (
+                            <div
+                                key={idx}
+                                className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-all flex flex-col items-center text-center"
+                            >
+                                <img
+                                src={item.image}
+                                alt={item.title}
+                                className="w-full h-40 object-cover rounded mb-3"
+                                />
+                                <h3 className="text-base font-semibold text-gray-800 mb-1 line-clamp-2">{item.title}</h3>
+                                <p className="text-sm text-gray-600">
+                                Calories: <span className="font-medium">{calories ? `${Math.round(calories)} kcal` : "N/A"}</span>
+                                </p>
+                            </div>
+                            );
+                        })
+                        ) : (
+                        <p className="text-gray-500 italic col-span-full text-center">No recommendations available yet.</p>
+                        )}
+                    </div>
+                    </section>
+
 
                 {showModal && (
                     <Modal setShowModal={setShowModal}>
