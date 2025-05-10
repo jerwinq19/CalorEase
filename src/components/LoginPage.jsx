@@ -1,7 +1,35 @@
-import { Link } from "react-router-dom";
-
+import { Link , useNavigate} from "react-router-dom";
+import Swal from "sweetalert2";
+import { useState } from "react";
 
 const LoginPage = () => {
+    const [username, setUsername] = useState("")
+    const [password, setPassword] = useState("")
+    const navigate = useNavigate() // use to nagivate
+
+    const handleLogin = () => {
+        const accountsData = JSON.parse(localStorage.getItem("Accounts"));
+    
+        const isLog = accountsData.find(
+        (user) => user.username === username && user.password === password
+        );
+    
+        if (isLog) {
+        localStorage.setItem("CurrentUserId", isLog.id); // or use isLog.username
+    
+        navigate("/dashboard");
+        } else {
+            Swal.fire({
+                title: "No user found.",
+                text: "It seems that user didn't exist in our database...",
+                icon: "warning"
+            });
+            setUsername("")
+            setPassword("")
+        }
+    };
+
+
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <div className="bg-white shadow-md rounded-xl p-10 w-full max-w-md">
@@ -12,20 +40,24 @@ const LoginPage = () => {
                         type="text"
                         className="p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
                         placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                     />
 
                     <input 
                         type="password"
                         className="p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
                         placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
 
-                    <Link 
+                    <button 
                         className="bg-green-500 hover:bg-green-600 text-white text-center py-2 px-4 rounded transition"
-                        to="/dashboard"
+                        onClick={handleLogin}
                     >
                         Log in
-                    </Link>
+                    </button>
 
                     <p className="text-center text-sm text-gray-500">
                         Don't have an account? 

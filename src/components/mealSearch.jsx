@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import '../style/recipeSearchStyle.css'
 import axios from "axios";
 import RecipeCard from "./calorieInfo";
-
+import MyNavbar from "./navBar";
 
 const PaginationMeals = ({totalPost, postPerPage, setCurrentPage}) => {
     let pages = []
@@ -13,17 +13,19 @@ const PaginationMeals = ({totalPost, postPerPage, setCurrentPage}) => {
     }
 
     return(
-        <div className="flex gap-3 justify-center mt-5">
-            {pages.map((page, index) => {
-                return(
-                <button 
-                    key={index} 
-                    onClick={() => setCurrentPage(page)}
-                    className="bg-green-400 text-white p-3 rounded-lg text-lg"
+        <div className="flex flex-wrap justify-center gap-2 mt-6">
+            {pages.map((page, index) => (
+                <button
+                key={index}
+                onClick={() => setCurrentPage(page)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 
+                    ${setCurrentPage === page 
+                    ? 'bg-green-600 text-white shadow-md' 
+                    : 'bg-green-100 text-green-700 hover:bg-green-300 hover:text-white'}`}
                 >
-                    {page}
-                </button>)
-            })}
+                {page}
+                </button>
+            ))}
         </div>
     );
 }
@@ -115,34 +117,47 @@ const SearchRecipe = () => {
     }, [])
     
     return (
-        <div className="m-10">
-            {/* search function */}
-            <span className="flex">
-                <input 
-                type="text"
-                value={SearchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                className="p-3 bg-gray-100 flex-1 outline-none"
-                placeholder="Search Meal..."
-                />
+        <>
+            <MyNavbar />
+            <div className="m-10">
+                {/* search function */}
+                <div className="flex flex-col sm:flex-row items-stretch gap-2 sm:gap-0 max-w-xl w-full mx-auto mt-6">
+                    <input 
+                        type="text"
+                        value={SearchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        className="p-3 bg-gray-100 flex-1 rounded-l-lg sm:rounded-l-lg sm:rounded-r-none rounded-lg outline-none focus:ring-2 focus:ring-green-400 transition"
+                        placeholder="Search Meal..."
+                    />
 
-                <button className="p-3 bg-green-400 text-white"
-                onClick={() => FetchRecipe(SearchInput)}>
-                    Search
-                </button>
-            </span>
-
-            {Recipes && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-10">
-                    {currentPost.map((Meal,idx) => (
-                        <RecipeCard image={Meal.image} name={Meal.title} key={Meal.id} id={Meal.id} idx={idx} />
-                    ))}
+                    <button
+                        className="bg-green-500 text-white px-5 py-3 rounded-r-lg sm:rounded-l-none rounded-lg hover:bg-green-600 transition font-semibold"
+                        onClick={() => FetchRecipe(SearchInput)}
+                    >
+                        Search
+                    </button>
                 </div>
-            )}
 
-            <PaginationMeals totalPost={Recipes.length} postPerPage={postPerPage} setCurrentPage={setCurrentPage}/>
+                {Recipes && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10 px-2 sm:px-0">
+                        {currentPost.map((Meal, idx) => (
+                        <RecipeCard
+                            key={Meal.id}
+                            image={Meal.image}
+                            name={Meal.title}
+                            id={Meal.id}
+                            idx={idx}
+                        />
+                        ))}
+                    </div>
+                )}
 
-        </div>
+                <PaginationMeals totalPost={Recipes.length} postPerPage={postPerPage} setCurrentPage={setCurrentPage}/>
+
+            </div>
+            
+        
+        </>
     );
 };
 
