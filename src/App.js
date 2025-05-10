@@ -18,6 +18,7 @@ function App() {
       {/* <LandingPage /> */}
       <Routes>
         <Route path='/' element={<DashBoard />} />
+        <Route path='/landing' element={<LandingPage />} />
         <Route path='/search' element={<SearchRecipe />} />
         <Route path='/dashboard' element={<DashBoard />} />
         <Route path='/updategoal' element={<UpdateHealthGoal />} />
