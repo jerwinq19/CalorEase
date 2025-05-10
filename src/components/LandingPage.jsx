@@ -4,7 +4,7 @@ function LandingPage()  {
     <div className="font-sans text-gray-800">
       {/* Header */}
       <header className="flex justify-between items-center px-6 py-4 bg-white shadow">
-        <h1 className="text-2xl font-bold text-green-700">ColorEase </h1>
+        <h1 className="text-2xl font-bold text-green-700">ColorEase ni Jessie </h1>
         <div className="space-x-4 text-sm">
           <a href="#" className="text-gray-600 hover:text-black">Login</a>
           <a href="#" className="text-gray-600 hover:text-black">Register</a>
