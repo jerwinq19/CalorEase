@@ -17,8 +17,8 @@ function App() {
     <div className="App">
       {/* <LandingPage /> */}
       <Routes>
-        <Route path='/' element={<DashBoard />} />
-        <Route path='/landing' element={<LandingPage />} />
+        <Route path='/' element={<LandingPage />} />
+        <Route path='/login' element={<LoginPage />} />
         <Route path='/search' element={<SearchRecipe />} />
         <Route path='/dashboard' element={<DashBoard />} />
         <Route path='/updategoal' element={<UpdateHealthGoal />} />

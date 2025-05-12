@@ -1,84 +1,97 @@
+import { Link } from "react-router-dom";
 
-function LandingPage()  {
+const LandingPage = () =>  {
   return (
     <div className="font-sans text-gray-800">
       {/* Header */}
-      <header className="flex justify-between items-center px-6 py-4 bg-white shadow">
-        <h1 className="text-2xl font-bold text-green-700">ColorEase </h1>
-        <div className="space-x-4 text-sm">
-          <a href="#" className="text-gray-600 hover:text-black">Login</a>
-          <a href="#" className="text-gray-600 hover:text-black">Register</a>
-        </div>
+      <header className="flex justify-between items-center px-6 py-4 bg-white shadow-md sticky top-0 z-50">
+        <h1 className="text-2xl font-extrabold text-green-600 tracking-tight">CalorEase</h1>
+        <nav className="space-x-6 text-sm">
+          <Link to="/login" className="text-gray-600 hover:text-green-700 transition">Login</Link>
+          <Link to="/register" className="text-gray-600 hover:text-green-700 transition">Register</Link>
+        </nav>
       </header>
 
       {/* Hero Section */}
-      <section className="text-center py-16 px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-2">Track what you eat. Stay on track.</h2>
-        <p className="text-gray-500 mb-6">simple, smart calorie tracking for your everyday meals.</p>
-        <div className="space-x-4">
-          <button className="bg-gray-200 px-5 py-2 rounded hover:bg-gray-300">Learn more</button>
-          <button className="bg-green-500 text-white px-5 py-2 rounded hover:bg-green-600">Get started</button>
+      <section className="text-center py-20 px-4 bg-gradient-to-br from-green-50 via-white to-white">
+        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
+          Track what you eat. <br className="hidden md:block" /> Stay on track.
+        </h2>
+        <p className="text-gray-600 text-lg mb-8">
+          Simple, smart calorie tracking for your everyday meals.
+        </p>
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link to='/smartnutrition' className="bg-gray-200 px-6 py-2 rounded-lg hover:bg-gray-300 shadow transition">
+            Learn more
+          </Link>
+          <button className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 shadow-lg transition">
+            Get started
+          </button>
         </div>
-        <div className="mt-4">
-          <button className="bg-gray-300 px-4 py-1 rounded hover:bg-gray-400">Food List</button>
+        <div className="mt-6">
+          <button className="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400 transition">
+            View Food List
+          </button>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="bg-gray-100 py-12 px-6 text-center">
-        <h3 className="text-xl font-bold mb-2">Making Nutrition Tracking Easier</h3>
-        <p className="text-gray-600 max-w-2xl mx-auto mb-10">
-          We recognize the overwhelming nature of the majority of calorie-tracking apps. For this reason,
-          we created Calorease to make tracking easy, interesting, and even enjoyable.
+      <section className="bg-gray-100 py-16 px-6 text-center">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Making Nutrition Tracking Easier</h3>
+        <p className="text-gray-600 max-w-2xl mx-auto mb-12">
+          We recognize the overwhelming nature of most calorie-tracking apps. That’s why we built ColorEase—to make tracking effortless, rewarding, and even fun.
         </p>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded shadow">
-            <div className="text-3xl mb-2">📋</div>
-            <h4 className="font-bold mb-2">Intuitive Tracking</h4>
-            <p className="text-sm text-gray-600">
-              Our simplified food logging system makes tracking your daily intake quick and hassle-free,
-              with smart suggestions based on your habits.
-            </p>
-          </div>
-          <div className="bg-white p-6 rounded shadow">
-            <div className="text-3xl mb-2">⚡</div>
-            <h4 className="font-bold mb-2">Motivational Streaks</h4>
-            <p className="text-sm text-gray-600">
-              Stay consistent with our engaging streak system that rewards your daily logging and helps
-              build healthy habits that last.
-            </p>
-          </div>
-          <div className="bg-white p-6 rounded shadow">
-            <div className="text-3xl mb-2">🍴</div>
-            <h4 className="font-bold mb-2">Professional Guidance</h4>
-            <p className="text-sm text-gray-600">
-              Get personalized advice from certified fitness trainers who can help you optimize your
-              nutrition and achieve your goals faster.
-            </p>
-          </div>
+        <div className="grid md:grid-cols-3 gap-8">
+          {[
+            {
+              icon: '📋',
+              title: 'Intuitive Tracking',
+              desc: 'Our simplified food logging system makes tracking your daily intake fast and hassle-free, with smart suggestions based on your habits.',
+            },
+            {
+              icon: '⚡',
+              title: 'Motivational Streaks',
+              desc: 'Stay consistent with our fun streak system that rewards daily logging and encourages long-term habit formation.',
+            },
+            {
+              icon: '🍴',
+              title: 'Professional Guidance',
+              desc: 'Get expert advice from certified nutritionists and trainers who tailor recommendations to your goals.',
+            },
+          ].map(({ icon, title, desc }) => (
+            <div key={title} className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
+              <div className="text-4xl mb-4">{icon}</div>
+              <h4 className="text-lg font-semibold mb-2">{title}</h4>
+              <p className="text-sm text-gray-600">{desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Benefits Section */}
-      <section className="py-12 px-6 max-w-3xl mx-auto">
-        <h3 className="text-xl font-bold mb-4">Crush Your Health Goals with Confidence</h3>
-        <p className="text-sm mb-4">Stop guessing. Start making progress. With Calorease, you can:</p>
-        <ul className="list-disc pl-6 text-sm space-y-2">
-          <li>Effortlessly track your daily nutrition with our smart search that learns your preferences</li>
-          <li>Stay motivated with achievement badges and streak rewards that celebrate your consistency</li>
-          <li>Get expert guidance from certified trainers who can customize plans based on your data</li>
-          <li>Visualize your progress with intuitive charts and insights that show your journey</li>
+      <section className="py-16 px-6 max-w-3xl mx-auto text-center">
+        <h3 className="text-2xl font-bold text-gray-800 mb-4">Crush Your Health Goals with Confidence</h3>
+        <p className="text-gray-600 mb-6">
+          Stop guessing. Start progressing. With ColorEase, you’ll enjoy features that actually help you succeed.
+        </p>
+        <ul className="list-disc text-left text-sm text-gray-700 space-y-3 pl-6">
+          <li>Track daily nutrition effortlessly with intelligent suggestions</li>
+          <li>Stay engaged with achievement badges and streak rewards</li>
+          <li>Receive personalized plans from certified professionals</li>
+          <li>Understand your journey through clear visual analytics</li>
         </ul>
-        <a href="#" className="text-sm text-blue-500 mt-4 inline-block">LEARN MORE..</a>
+        <a href="#" className="inline-block mt-6 text-sm text-green-600 hover:underline">
+          Learn more →
+        </a>
       </section>
 
       {/* Footer */}
-      <footer className="text-center py-6 text-sm text-gray-500">
-        FOOTER
+      <footer className="text-center py-6 text-sm text-gray-500 border-t">
+        &copy; {new Date().getFullYear()} ColorEase. All rights reserved.
       </footer>
     </div>
   );
-};
+}
 
 export default LandingPage;
