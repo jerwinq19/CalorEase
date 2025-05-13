@@ -1,15 +1,31 @@
 import { Link , useNavigate} from "react-router-dom";
 import Swal from "sweetalert2";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const navigate = useNavigate() // use to nagivate
 
+    useEffect(() => {
+        const handleIfNoLocalStorage = () => {
+            const accountsData = JSON.parse(localStorage.getItem("Accounts"));
+
+            if (accountsData === null) {
+                const defaultAcc = [
+                    { id: 1, username: "test", password: "test123" }
+                ]
+                localStorage.setItem("Accounts", JSON.stringify(defaultAcc));
+                alert("Local storage created with default account.");
+                return
+            } else return console.log("dasdsa")
+        }
+        handleIfNoLocalStorage()
+    }, [])
+
     const handleLogin = () => {
         const accountsData = JSON.parse(localStorage.getItem("Accounts"));
-    
+
         const isLog = accountsData.find(
         (user) => user.username === username && user.password === password
         );

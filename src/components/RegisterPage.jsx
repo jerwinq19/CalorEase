@@ -1,20 +1,24 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import { useState } from "react";
 import { nanoid } from "nanoid";
 import Swal from "sweetalert2";
 
 const RegisterPage = () => {
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-    const [weight, setWeight] = useState(0)
-    const [targetWeight, setTargetWeight] = useState(0)
-    const [timeFrame, setTimeFrame] = useState(0)
-    const [activityLevel, setActivityLevel] = useState("")
-    const [dietPref, setDietPref] = useState("")
-    const [gender, setGender] = useState("")
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [weight, setWeight] = useState(0);
+    const [targetWeight, setTargetWeight] = useState(0);
+    const [timeFrame, setTimeFrame] = useState(0);
+    const [activityLevel, setActivityLevel] = useState("");
+    const [dietPref, setDietPref] = useState("");
+    const [gender, setGender] = useState("");
+    const [age, setAge] = useState(0);
+    const [height, setHeight] = useState(0);
+
+    const navigate = useNavigate()
 
     const handleRegister = () => {
-        if (!username || !password || !weight || !targetWeight || !timeFrame || !activityLevel || !dietPref || !gender) {
+        if (!username || !password || !weight || !targetWeight || !timeFrame || !activityLevel || !dietPref || !gender || !age || !height) {
             return Swal.fire({
                 title: "Missing Input",
                 text: "Please complete all fields before proceeding.",
@@ -33,12 +37,15 @@ const RegisterPage = () => {
             activityLevel,
             dietPref,
             gender,
+            age,
+            height,
         };
 
         const accounts = JSON.parse(localStorage.getItem("Accounts")) || [];
         accounts.push(AccountData);
         localStorage.setItem("Accounts", JSON.stringify(accounts));
 
+        // Clear form
         setUsername("");
         setPassword("");
         setWeight(0);
@@ -47,12 +54,15 @@ const RegisterPage = () => {
         setActivityLevel("");
         setDietPref("");
         setGender("");
+        setAge(0);
+        setHeight(0);
 
         Swal.fire({
             title: "Registered",
             text: "Successfully registered! Please log in.",
             icon: "success"
         });
+        navigate("/")
     };
 
     return (
@@ -80,6 +90,28 @@ const RegisterPage = () => {
                             className="mt-1 p-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-green-400"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </label>
+
+                    <label className="text-sm font-medium">
+                        Age
+                        <input
+                            type="number"
+                            placeholder="Age"
+                            className="mt-1 p-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-green-400"
+                            value={age}
+                            onChange={(e) => setAge(Number(e.target.value))}
+                        />
+                    </label>
+
+                    <label className="text-sm font-medium">
+                        Height (cm)
+                        <input
+                            type="number"
+                            placeholder="Height in cm"
+                            className="mt-1 p-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-green-400"
+                            value={height}
+                            onChange={(e) => setHeight(Number(e.target.value))}
                         />
                     </label>
 
@@ -160,7 +192,6 @@ const RegisterPage = () => {
                             <option value="Female">Female</option>
                         </select>
                     </label>
-
                 </div>
 
                 <div className="mt-6">

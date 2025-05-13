@@ -14,6 +14,7 @@ const DashBoard = () => {
     const [maxCal, setMaxCalorie] = useState(0)
     const [showModal, setShowModal] = useState(false)
     const [RecoFood, setRecoFood] = useState([])
+    const [defaultData, setDefaultData] = useState([])
 
     const navigate = useNavigate()
 
@@ -27,16 +28,21 @@ const DashBoard = () => {
                 const currentUserData = allAccounts[currentUserIndex];
     
                 console.log(currentUserData);
-    
-                const maxCalorie = calculateMaxCalorie({
+
+                const userData = {
                     weight: Number(currentUserData.weight),
                     targetWeight: Number(currentUserData.targetWeight),
                     timeframe: Number(currentUserData.timeFrame),
                     activity: currentUserData.activityLevel,
                     age: 20,
                     height: 172.72,
-                    gender: currentUserData.gender.toLowerCase()
-                });
+                    gender: currentUserData.gender.toLowerCase(),
+                    dietPref: currentUserData.dietPref
+                }
+    
+                const maxCalorie = calculateMaxCalorie(userData);
+
+                setDefaultData(userData);
 
                 console.log(maxCalorie)
 
@@ -60,15 +66,21 @@ const DashBoard = () => {
         try {
             const response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch`, {
                 params: {
-                diet,
-                number: 6,
-                apiKey: process.env.REACT_APP_API_KEY,
-                addRecipeNutrition: true,
-                maxCalories: maxcal
-                }
+                    diet,
+                    number: 6,
+                    apiKey: process.env.REACT_APP_API_KEY,
+                    addRecipeNutrition: true,
+                    sort: "random", // <-- Spoonacular randomization
+                    maxCalories: maxcal,
+                },
             });
-            
-            return response.data.results;
+
+            const meals = response.data.results;
+
+            // Optional: Shuffle results again on the frontend
+            const shuffled = meals.sort(() => Math.random() - 0.5);
+
+            return shuffled;
         } catch (err) {
             Swal.fire({
                 title: "Error fetching API Data",
@@ -77,6 +89,7 @@ const DashBoard = () => {
             });
         }
     };
+
 
     const calculateMaxCalorie = ({ weight, targetWeight, timeframe, activity, age, height, gender }) => {
         const activityFactors = {
@@ -265,7 +278,7 @@ const DashBoard = () => {
 
                 {showModal && (
                     <Modal setShowModal={setShowModal} title={'Updatae Goal'} size="xl"   closeOnBackdrop={true}>
-                        <UpdateHealthGoal maxCalories={maxCal}/>
+                        <UpdateHealthGoal maxCalories={maxCal} defaultData={defaultData}/>
                     </Modal>
                 )}
 
