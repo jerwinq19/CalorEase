@@ -19,6 +19,118 @@ const LandingPage = () =>  {
         </h2>
         <p className="text-gray-600 text-lg mb-8">
           Simple, smart calorie tracking for your everyday meals.
+        </p>import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+
+const LandingPage = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+  const [maxHeight, setMaxHeight] = useState("0px");
+
+  // Adjust maxHeight based on menu content height
+  useEffect(() => {
+    if (menuOpen && menuRef.current) {
+      setMaxHeight(`${menuRef.current.scrollHeight}px`);
+    } else {
+      setMaxHeight("0px");
+    }
+  }, [menuOpen]);
+
+  return (
+    <div className="font-sans text-gray-800">
+      <header className="flex justify-between items-center px-6 py-4 bg-white shadow-md  top-0 z-50 relative">
+        <h1 className="text-2xl font-extrabold text-green-600 tracking-tight">
+          CalorEase
+        </h1>
+
+        {/* Mobile Hamburger Button */}
+        <button
+          className="md:hidden text-gray-600 hover:text-green-700 focus:outline-none"
+          onClick={() => setMenuOpen((prev) => !prev)}
+          aria-label="Toggle menu"
+          aria-expanded={menuOpen}
+        >
+          {menuOpen ? (
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          ) : (
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          )}
+        </button>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex space-x-6 text-sm">
+          <Link
+            to="/login"
+            className="text-gray-600 hover:text-green-700 transition"
+          >
+            Login
+          </Link>
+          <Link
+            to="/register"
+            className="text-gray-600 hover:text-green-700 transition"
+          >
+            Register
+          </Link>
+        </nav>
+
+        {/* Mobile Navigation with smooth transition */}
+        <nav
+          ref={menuRef}
+          className="md:hidden bg-white shadow-lg rounded-md absolute right-6 top-full mt-1 overflow-hidden transition-all duration-300 ease-in-out"
+          style={{ maxHeight, opacity: menuOpen ? 1 : 0, pointerEvents: menuOpen ? "auto" : "none" }}
+        >
+          <div className="flex flex-col py-2">
+            <Link
+              to="/login"
+              className="px-4 py-2 text-gray-700 hover:bg-green-100 hover:text-green-700 transition"
+              onClick={() => setMenuOpen(false)}
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              className="px-4 py-2 text-gray-700 hover:bg-green-100 hover:text-green-700 transition"
+              onClick={() => setMenuOpen(false)}
+            >
+              Register
+            </Link>
+          </div>
+        </nav>
+      </header>
+
+      {/* Hero Section */}
+      <section className="text-center py-20 px-4 bg-gradient-to-br from-green-50 via-white to-white">
+        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
+          Track what you eat. <br className="hidden md:block" /> Stay on track.
+        </h2>
+        <p className="text-gray-600 text-lg mb-8">
+          Simple, smart calorie tracking for your everyday meals.
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <Link to='/smartnutrition' className="bg-gray-200 px-6 py-2 rounded-lg hover:bg-gray-300 shadow transition">
@@ -81,9 +193,9 @@ const LandingPage = () =>  {
           <li>Receive personalized plans from certified professionals</li>
           <li>Understand your journey through clear visual analytics</li>
         </ul>
-        <a href="#" className="inline-block mt-6 text-sm text-green-600 hover:underline">
+        <Link to='/smartnutrition' className="inline-block mt-6 text-sm text-green-600 hover:underline">
           Learn more →
-        </a>
+        </Link>
       </section>
 
       {/* Footer */}
