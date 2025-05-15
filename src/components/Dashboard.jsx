@@ -6,6 +6,9 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { Link } from "react-router-dom"
 import UpdateHealthGoal from "./UpdateHealthGoal";
+import CaloriesChart from "./charts/CalorieCharts";
+import StreakChart from "./charts/StreakCharts";
+import WeightChart from "./charts/WeightCharts";
 
 const DashBoard = () => {
     const [change, isChange] = useState(false)
@@ -15,6 +18,9 @@ const DashBoard = () => {
     const [showModal, setShowModal] = useState(false)
     const [RecoFood, setRecoFood] = useState([])
     const [defaultData, setDefaultData] = useState([])
+    const [calorieData, setCalorieData] = useState([])
+    const [streakData, setStreakData] = useState([])
+    const [weightData, setWeightData] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -39,6 +45,10 @@ const DashBoard = () => {
     
                 const maxCalorie = calculateMaxCalorie(userData);
 
+                console.log(currentUserData)
+                setCalorieData(currentUserData.analytics.calories)
+                setStreakData(currentUserData.analytics.streaks)
+                setWeightData()
                 setDefaultData(userData);
 
                 const sampleData = await fetchRecomended({ diet: currentUserData.dietPref, maxcal: maxCalorie });
@@ -193,9 +203,27 @@ const DashBoard = () => {
                 }
             });
 
-            const alreadyLogged = currentUserData.analytics.streaks.some(s => s.date === currentDate);
+            const streaks = currentUserData.analytics.streaks || [];
+            const last = streaks.at(-1); // gets last element
+            const alreadyLogged = streaks.some(s => s.date === currentDate);
+
             if (!alreadyLogged) {
-                currentUserData.analytics.streaks.push({ date: currentDate });
+            let newStreak = 1;
+
+            if (last) {
+                const lastDate = new Date(last.date);
+                const current = new Date(currentDate);
+
+                // Check if the last date is exactly yesterday
+                lastDate.setDate(lastDate.getDate() + 1);
+                const isConsecutive = lastDate.toDateString() === current.toDateString();
+
+                if (isConsecutive) {
+                newStreak = (last.streak || 1) + 1;
+                }
+            }
+
+            streaks.push({ date: currentDate, streak: newStreak });
             }
 
             
@@ -294,6 +322,37 @@ const DashBoard = () => {
                         </div>
                     </div>
                 </section>
+                
+                <section className="w-full py-10 px-4 md:px-8 bg-gradient-to-br from-white to-slate-100">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Header */}
+                        <div className="mb-10 text-center">
+                        <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 via-green-500 to-purple-500 bg-clip-text text-transparent animate-gradient">
+                            Health Analytics Overview
+                        </h1>
+                        <p className="mt-2 text-gray-500">Track your performance and body progress over time</p>
+                        <div className="w-16 h-1 bg-blue-500 mx-auto mt-4 rounded-full" />
+                        </div>
+
+                        {/* Top: Calorie chart (full width) */}
+                        <div className="mb-6">
+                        <div className="hover:scale-[1.02] transition-transform duration-300">
+                            <CaloriesChart data={calorieData} />
+                        </div>
+                        </div>
+
+                        {/* Bottom: Streak + Weight charts */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="hover:scale-[1.02] transition-transform duration-300">
+                            <StreakChart data={streakData} />
+                        </div>
+                        <div className="hover:scale-[1.02] transition-transform duration-300">
+                            <WeightChart data={weightData} />
+                        </div>
+                        </div>
+                    </div>
+                </section>
+
 
                 
                 {/* CALORIE GOAL SECTION */}
@@ -349,7 +408,7 @@ const DashBoard = () => {
                         <p className="text-gray-500 italic col-span-full text-center">No recommendations available yet.</p>
                         )}
                     </div>
-                    </section>
+                </section>
 
 
                 {showModal && (

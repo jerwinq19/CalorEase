@@ -96,7 +96,7 @@ const SearchRecipe = () => {
                 }
 
                 // fetch the api 
-                const response = await axios.get(`https://api.spoonacular.com/recipes/random?includeNutrition=true&number=31&apiKey=${process.env.REACT_APP_API_KEY}`)
+                const response = await axios.get(`https://api.spoonacular.com/recipes/random?includeNutrition=true&number=60&apiKey=${process.env.REACT_APP_API_KEY}`)
                 console.log(`recipe saved to the local storage...`, response.data.recipes)
 
                 // append to the local storage

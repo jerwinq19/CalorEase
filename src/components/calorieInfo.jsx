@@ -69,10 +69,6 @@ const RecipeCard = ({name, image, id, idx}) => {
                     return;
                 }
                 
-                console.log(currentUser)
-                console.log(mealCalorie)
-
-
                 const newMeal = {
                     id: mealCalorie.id,
                     name: mealCalorie.title,
