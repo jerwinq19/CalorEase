@@ -85,6 +85,11 @@ const RegisterPage = () => {
     return (
         <div className="flex justify-center items-center min-h-screen bg-green-50 px-4">
             <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-3xl">
+                <div className="mb-6">
+                    <Link to="/login" className="text-gray-600 hover:text-green-600 flex items-center font-medium">
+                        <span className="mr-2 text-xl select-none">←</span> Back
+                    </Link>
+                </div>
                 <h1 className="text-3xl font-bold text-center text-green-600 mb-6">Join CalorEase</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
