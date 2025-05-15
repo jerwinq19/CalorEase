@@ -1,11 +1,15 @@
-import React from "react";
-import MyNavbar from "./navBar";
-
+import { Link } from "react-router-dom";
 function SmartNutrition() {
     return (
         
         <div className="guide-container">
-            <MyNavbar/>
+                <header className="flex justify-between items-center px-6 py-4 bg-white shadow-md sticky top-0 z-50">
+                    <h1 className="text-2xl font-extrabold text-green-600 tracking-tight">CalorEase</h1>
+                    <nav className="space-x-6 text-sm">
+                    <Link to="/" className="text-gray-600 hover:text-green-700 transition">Home
+                    </Link>
+                    </nav>
+                </header>
             <div className="guide-wrapper">
                 <header className="guide-header">
                     <h1>Your Guide to Smart Nutrition</h1>
