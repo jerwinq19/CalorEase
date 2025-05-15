@@ -57,6 +57,11 @@ const LoginPage = () => {
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <div className="bg-white shadow-md rounded-xl p-10 w-full max-w-md">
+                <div className="mb-6">
+                    <Link to="/" className="text-gray-600 hover:text-green-600 flex items-center font-medium">
+                        <span className="mr-2 text-xl select-none">←</span> Back
+                    </Link>
+                </div>
                 <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Log in to Your Tracker</h1>
 
                 <div className="flex flex-col gap-4">
