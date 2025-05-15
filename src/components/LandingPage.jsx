@@ -1,28 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const LandingPage = () =>  {
-  return (
-    <div className="font-sans text-gray-800">
-      {/* Header */}
-      <header className="flex justify-between items-center px-6 py-4 bg-white shadow-md sticky top-0 z-50">
-        <h1 className="text-2xl font-extrabold text-green-600 tracking-tight">CalorEase</h1>
-        <nav className="space-x-6 text-sm">
-          <Link to="/login" className="text-gray-600 hover:text-green-700 transition">Login</Link>
-          <Link to="/register" className="text-gray-600 hover:text-green-700 transition">Register</Link>
-        </nav>
-      </header>
-
-      {/* Hero Section */}
-      <section className="text-center py-20 px-4 bg-gradient-to-br from-green-50 via-white to-white">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
-          Track what you eat. <br className="hidden md:block" /> Stay on track.
-        </h2>
-        <p className="text-gray-600 text-lg mb-8">
-          Simple, smart calorie tracking for your everyday meals.
-        </p>import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-
 const LandingPage = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
