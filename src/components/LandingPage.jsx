@@ -166,7 +166,7 @@ const LandingPage = () =>  {
       <section className="bg-gray-100 py-16 px-6 text-center">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">Making Nutrition Tracking Easier</h3>
         <p className="text-gray-600 max-w-2xl mx-auto mb-12">
-          We recognize the overwhelming nature of most calorie-tracking apps. That’s why we built ColorEase—to make tracking effortless, rewarding, and even fun.
+          We recognize the overwhelming nature of most calorie-tracking apps. Thats why we built ColorEase—to make tracking effortless, rewarding, and even fun.
         </p>
 
         <div className="grid md:grid-cols-3 gap-8">
