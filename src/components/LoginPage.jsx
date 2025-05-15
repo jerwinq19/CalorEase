@@ -1,101 +1,107 @@
-import { Link , useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 
 const LoginPage = () => {
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-    const navigate = useNavigate() // use to nagivate
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const handleIfNoLocalStorage = () => {
-            const accountsData = JSON.parse(localStorage.getItem("Accounts"));
+  useEffect(() => {
+    const accountsData = JSON.parse(localStorage.getItem("Accounts"));
 
-            if (accountsData === null) {
-                const defaultAcc = [
-                    { id: 1, username: "test", password: "test123" }
-                ]
-                localStorage.setItem("Accounts", JSON.stringify(defaultAcc));
-                alert("Local storage created with default account.");
-                return
-            } else return console.log("dasdsa")
-        }
-        handleIfNoLocalStorage()
-    }, [])
+    if (accountsData === null) {
+      const defaultAcc = [
+        { id: 1, username: "test", password: "test123" }
+      ];
+      localStorage.setItem("Accounts", JSON.stringify(defaultAcc));
+      alert("Local storage created with default account.");
+    }
+  }, []);
 
-    const handleLogin = () => {
-        const accountsData = JSON.parse(localStorage.getItem("Accounts")) || [];
-    
-        const matchedUser = accountsData.find(
-            (user) => user.username === username.trim() && user.password === password.trim()
-        );
-    
-        if (matchedUser) {
+  const handleLogin = () => {
+    const accountsData = JSON.parse(localStorage.getItem("Accounts")) || [];
 
-            localStorage.setItem("CurrentUserId", matchedUser.id);
-            
-            const updatedAccounts = accountsData.map(user =>
-                user.id === matchedUser.id ? matchedUser : user
-            );
-            localStorage.setItem("Accounts", JSON.stringify(updatedAccounts));
-    
-            navigate("/dashboard");
-        } else {
-            Swal.fire({
-                title: "No user found.",
-                text: "It seems that user doesn't exist in our database.",
-                icon: "warning"
-            });
-    
-            setUsername("");
-            setPassword("");
-        }
-    };
-    
-
-
-    return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
-            <div className="bg-white shadow-md rounded-xl p-10 w-full max-w-md">
-                <div className="mb-6">
-                    <Link to="/" className="text-gray-600 hover:text-green-600 flex items-center font-medium">
-                        <span className="mr-2 text-xl select-none">←</span> Back
-                    </Link>
-                </div>
-                <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Log in to Your Tracker</h1>
-
-                <div className="flex flex-col gap-4">
-                    <input 
-                        type="text"
-                        className="p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-
-                    <input 
-                        type="password"
-                        className="p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-
-                    <button 
-                        className="bg-green-500 hover:bg-green-600 text-white text-center py-2 px-4 rounded transition"
-                        onClick={handleLogin}
-                    >
-                        Log in
-                    </button>
-
-                    <p className="text-center text-sm text-gray-500">
-                        Don't have an account? 
-                        <Link to="/register" className="text-green-600 ml-1 hover:underline">Register</Link>
-                    </p>
-                </div>
-            </div>
-        </div>
+    const matchedUser = accountsData.find(
+      (user) =>
+        user.username === username.trim() &&
+        user.password === password.trim()
     );
+
+    if (matchedUser) {
+      localStorage.setItem("CurrentUserId", matchedUser.id);
+      localStorage.setItem("CurrentUsername", matchedUser.username);
+        
+      navigate("/dashboard");
+    } else {
+      Swal.fire({
+        title: "No user found.",
+        text: "It seems that user doesn't exist in our database.",
+        icon: "warning",
+      });
+      setUsername("");
+      setPassword("");
+    }
+  };
+
+  // 🔑 Handle form submission (including Enter key)
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleLogin();
+  };
+
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white shadow-md rounded-xl p-10 w-full max-w-md">
+        <div className="mb-6">
+          <Link
+            to="/"
+            className="text-gray-600 hover:text-green-600 flex items-center font-medium"
+          >
+            <span className="mr-2 text-xl select-none">←</span> Back
+          </Link>
+        </div>
+        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          Log in to Your Tracker
+        </h1>
+
+        {/* ✅ Use form with onSubmit */}
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Username"
+            className="p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            className="p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button
+            type="submit"
+            className="bg-green-500 hover:bg-green-600 text-white text-center py-2 px-4 rounded transition"
+          >
+            Log in
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-gray-500 mt-4">
+          Don't have an account?
+          <Link to="/register" className="text-green-600 ml-1 hover:underline">
+            Register
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default LoginPage;

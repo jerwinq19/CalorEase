@@ -21,6 +21,7 @@ const DashBoard = () => {
     const [calorieData, setCalorieData] = useState([])
     const [streakData, setStreakData] = useState([])
     const [weightData, setWeightData] = useState([])
+    const [username, setUsername] = useState("");
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -58,6 +59,12 @@ const DashBoard = () => {
                 setTotalCal(sumCal);
                 setMaxCalorie(maxCalorie)
                 setData(currentUserData.eatenFood);
+
+                const storedUsername = localStorage.getItem("CurrentUsername");
+                if (storedUsername) {
+                    setUsername(storedUsername);
+                }
+                
             } catch (error) {
                 console.error("Error in fetchCalories:", error);
             }
@@ -134,7 +141,8 @@ const DashBoard = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("CurrentUserId"); // or "CurrentUsername" depending on what you used
-        
+        localStorage.removeItem("CurrentUsername");
+
         // Optional: redirect to login page
         navigate("/");
         
@@ -231,10 +239,10 @@ const DashBoard = () => {
 
     return(
         <>
-            <MyNavbar />
+            <MyNavbar name={username ? `Welcome back, ${username}!` : "CalorEase"}/>
             <div className="p-5 max-w-6xl mx-auto">
                 {/* Page Title */}
-                <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Dashboard</h1> 
+                <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">DASHBOARD</h1> 
 
                 {/* Daily Log Section */}
                 <section className="bg-gradient-to-br from-slate-100 to-white p-6 rounded-2xl shadow-lg mb-10">
