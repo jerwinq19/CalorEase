@@ -24,26 +24,34 @@ const LoginPage = () => {
     }, [])
 
     const handleLogin = () => {
-        const accountsData = JSON.parse(localStorage.getItem("Accounts"));
-
-        const isLog = accountsData.find(
-        (user) => user.username === username && user.password === password
+        const accountsData = JSON.parse(localStorage.getItem("Accounts")) || [];
+    
+        const matchedUser = accountsData.find(
+            (user) => user.username === username.trim() && user.password === password.trim()
         );
     
-        if (isLog) {
-        localStorage.setItem("CurrentUserId", isLog.id); // or use isLog.username
+        if (matchedUser) {
+
+            localStorage.setItem("CurrentUserId", matchedUser.id);
+            
+            const updatedAccounts = accountsData.map(user =>
+                user.id === matchedUser.id ? matchedUser : user
+            );
+            localStorage.setItem("Accounts", JSON.stringify(updatedAccounts));
     
-        navigate("/dashboard");
+            navigate("/dashboard");
         } else {
             Swal.fire({
                 title: "No user found.",
-                text: "It seems that user didn't exist in our database...",
+                text: "It seems that user doesn't exist in our database.",
                 icon: "warning"
             });
-            setUsername("")
-            setPassword("")
+    
+            setUsername("");
+            setPassword("");
         }
     };
+    
 
 
     return (

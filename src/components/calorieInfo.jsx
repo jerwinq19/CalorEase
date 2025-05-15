@@ -58,7 +58,6 @@ const RecipeCard = ({name, image, id, idx}) => {
             if (currentUserIndex !== -1) {
                 const currentUser = allAccounts[currentUserIndex];
             
-                // Check if meal already exists
                 const alreadyAdded = currentUser.eatenFood.some(meal => meal.id === mealCalorie.id);
             
                 if (alreadyAdded) {
@@ -69,17 +68,20 @@ const RecipeCard = ({name, image, id, idx}) => {
                     });
                     return;
                 }
-            
-                // If not added yet, push the new meal
+                
+                console.log(currentUser)
+                console.log(mealCalorie)
+
+
                 const newMeal = {
                     id: mealCalorie.id,
                     name: mealCalorie.title,
                     kcal: mealCalorie.nutrition.nutrients[0].amount
                 };
-            
+
+                
                 currentUser.eatenFood.push(newMeal);
             
-                // Save back to localStorage
                 localStorage.setItem('Accounts', JSON.stringify(allAccounts));
             
                 Swal.fire({

@@ -6,19 +6,24 @@ import Swal from "sweetalert2";
 const RegisterPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [weight, setWeight] = useState(0);
-    const [targetWeight, setTargetWeight] = useState(0);
-    const [timeFrame, setTimeFrame] = useState(0);
+    const [weight, setWeight] = useState("");
+    const [targetWeight, setTargetWeight] = useState("");
+    const [timeFrame, setTimeFrame] = useState("");
     const [activityLevel, setActivityLevel] = useState("");
     const [dietPref, setDietPref] = useState("");
     const [gender, setGender] = useState("");
-    const [age, setAge] = useState(0);
-    const [height, setHeight] = useState(0);
+    const [age, setAge] = useState("");
+    const [height, setHeight] = useState("");
 
     const navigate = useNavigate()
 
     const handleRegister = () => {
-        if (!username || !password || !weight || !targetWeight || !timeFrame || !activityLevel || !dietPref || !gender || !age || !height) {
+        if (
+            !username.trim() || !password.trim() ||
+            weight === "" || targetWeight === "" || timeFrame === "" ||
+            !activityLevel || !dietPref || !gender ||
+            age === "" || height === ""
+        )   {
             return Swal.fire({
                 title: "Missing Input",
                 text: "Please complete all fields before proceeding.",
@@ -30,16 +35,28 @@ const RegisterPage = () => {
             id: nanoid(),
             username: username.trim(),
             password: password.trim(),
-            eatenFood: [],
-            weight,
-            targetWeight,
-            timeFrame,
+        
+            // Profile & Preferences
+            weight: Number(weight),
+            targetWeight: Number(targetWeight),
+            timeFrame: Number(timeFrame),
             activityLevel,
             dietPref,
             gender,
-            age,
-            height,
+            age: Number(age),
+            height: Number(height),
+        
+            // Food & Goals
+            eatenFood: [],
+        
+            // Analytics / Logs
+            analytics: {
+                calories: [],
+                weight: [],
+                streaks: []
+            }
         };
+        
 
         const accounts = JSON.parse(localStorage.getItem("Accounts")) || [];
         accounts.push(AccountData);

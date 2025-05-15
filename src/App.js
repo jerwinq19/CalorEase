@@ -9,7 +9,7 @@ import RegisterPage from './components/RegisterPage';
 import UpdateHealthGoal from './components/UpdateHealthGoal';
 import LandingPage from './components/LandingPage';
 import SmartNutrition from './components/SmartNutritionGuide';
-
+import AnalyticsDashboard from './components/test';
 
 function App() {
   //LANDING PAGE
@@ -24,6 +24,7 @@ function App() {
         <Route path='/updategoal' element={<UpdateHealthGoal />} />
         <Route path='/smartnutrition' element={<SmartNutrition />} />
         <Route path='/register' element={<RegisterPage/>}/>
+        <Route path='/test' element={<AnalyticsDashboard />}/>
         <Route path='*' element={<NotFound/>} />
       </Routes>
     </div>

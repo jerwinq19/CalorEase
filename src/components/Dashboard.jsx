@@ -15,7 +15,6 @@ const DashBoard = () => {
     const [showModal, setShowModal] = useState(false)
     const [RecoFood, setRecoFood] = useState([])
     const [defaultData, setDefaultData] = useState([])
-
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -27,8 +26,6 @@ const DashBoard = () => {
                 const currentUserIndex = allAccounts.findIndex(user => user.id === currentUserId);
                 const currentUserData = allAccounts[currentUserIndex];
     
-                console.log(currentUserData);
-
                 const userData = {
                     weight: Number(currentUserData.weight),
                     targetWeight: Number(currentUserData.targetWeight),
@@ -44,11 +41,8 @@ const DashBoard = () => {
 
                 setDefaultData(userData);
 
-                console.log(maxCalorie)
-
                 const sampleData = await fetchRecomended({ diet: currentUserData.dietPref, maxcal: maxCalorie });
                 setRecoFood(sampleData)
-                console.log(sampleData)
                 
                 const sumCal = currentUserData.eatenFood.reduce((x, y) => x + y.kcal, 0);
                 setTotalCal(sumCal);
@@ -70,25 +64,31 @@ const DashBoard = () => {
                     number: 6,
                     apiKey: process.env.REACT_APP_API_KEY,
                     addRecipeNutrition: true,
-                    sort: "random", // <-- Spoonacular randomization
-                    maxCalories: maxcal,
+                    sort: "random",
                 },
             });
-
+    
             const meals = response.data.results;
-
-            // Optional: Shuffle results again on the frontend
-            const shuffled = meals.sort(() => Math.random() - 0.5);
-
+    
+            // Optional: filter meals under max calories
+            const filteredMeals = meals.filter(item => {
+                const cal = item.nutrition?.nutrients?.find(n => n.name === "Calories")?.amount;
+                return cal && cal <= maxcal;
+            });
+    
+            const shuffled = filteredMeals.sort(() => Math.random() - 0.5);
             return shuffled;
         } catch (err) {
+            console.error("API error:", err);
             Swal.fire({
                 title: "Error fetching API Data",
-                text: "Error fetching API data...",
+                text: "Check your API key or connection.",
                 icon: "error"
             });
+            return [];
         }
     };
+    
 
 
     const calculateMaxCalorie = ({ weight, targetWeight, timeframe, activity, age, height, gender }) => {
@@ -139,7 +139,67 @@ const DashBoard = () => {
     const onUpdateGoal = () => {
         setShowModal(true)
     } 
-    // PANG UPDATE NG CALORIE GOAL HIJO
+
+
+    const handleFinishEating = () => {
+            const allAccounts = JSON.parse(localStorage.getItem('Accounts')) || [];
+            const currentUserId = localStorage.getItem('CurrentUserId');
+            const currentUserIndex = allAccounts.findIndex(user => user.id === currentUserId);
+            const currentUserData = allAccounts[currentUserIndex];
+
+            const currentDate = new Date().toISOString().split("T")[0]; // Use YYYY-MM-DD
+
+            const calorieData = {
+                date: currentDate,
+                totalCalorieThatDay: Math.min(totalCal, maxCal < totalCal ? totalCal : maxCal)
+            }  
+
+            Swal.fire({
+                title: "Finish your day?",
+                text: "Do you want to save today's calorie data?",
+                icon: "question",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "✅ Save",
+                denyButtonText: "❌ Don't Save",
+                cancelButtonText: "Back",
+                confirmButtonColor: "#28a745",  // green
+                denyButtonColor: "#dc3545",     // red
+                cancelButtonColor: "#6c757d",   // gray
+                reverseButtons: true,
+                customClass: {
+                    popup: 'swal2-border-radius-lg'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentUserData.eatenFood = [];
+                    currentUserData.analytics.calories.push(calorieData);
+                    localStorage.setItem('Accounts', JSON.stringify(allAccounts));
+                    isChange(prev => !prev);
+            
+                    Swal.fire({
+                        title: "Day Completed!",
+                        text: "Your calorie intake has been logged. See you tomorrow!",
+                        icon: "success",
+                        confirmButtonColor: "#28a745"
+                    });
+                } else if (result.isDenied) {
+                    Swal.fire({
+                        title: "Not saved",
+                        text: "Your changes were not saved.",
+                        icon: "info",
+                        confirmButtonColor: "#6c757d"
+                    });
+                }
+            });
+
+            const alreadyLogged = currentUserData.analytics.streaks.some(s => s.date === currentDate);
+            if (!alreadyLogged) {
+                currentUserData.analytics.streaks.push({ date: currentDate });
+            }
+
+            
+    };
 
     return(
         <>
@@ -179,7 +239,8 @@ const DashBoard = () => {
                     ) : (
                         <div className="text-center py-10">
                         <p className="text-gray-500 italic mb-2">No meals added yet.</p>
-                        <button className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-md text-sm shadow-sm transition">
+                        <button className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-md text-sm shadow-sm transition"
+                        onClick={() => navigate('/search')}>
                             Add your first meal
                         </button>
                         </div>
@@ -188,37 +249,52 @@ const DashBoard = () => {
 
 
                 {/* Summary Section */}
-                <section className="bg-slate-100 p-6 rounded-xl shadow mb-8">
-                    <h2 className="text-2xl font-semibold text-gray-700 mb-6">Summary</h2>
+                <section className="bg-white p-6 rounded-2xl shadow-lg mb-8 border border-gray-200">
+                    <h2 className="text-2xl font-bold text-green-600 mb-6 tracking-tight">Today's Summary</h2>
 
-                    <div className="space-y-4">
-                        {/* Totals */}
-                        <div className="flex justify-between text-gray-700 font-medium">
-                            <p>Total Current Calories:</p>
-                            <p>{data.length > 0 ? `${totalCal.toFixed(2)} kcal` : "No calories yet..."}</p>
-                        </div>
+                    <div className="space-y-5">
+                        {/* Calorie Totals */}
+                        <div className="grid grid-cols-2 gap-4 text-gray-700 text-base font-semibold">
+                            <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+                                <span>Current Intake</span>
+                                <span className="text-green-700">
+                                    {data.length > 0 ? `${totalCal.toFixed(2)} kcal` : "No data"}
+                                </span>
+                            </div>
 
-                        <div className="flex justify-between text-gray-700 font-medium">
-                            <p>Total Target Calories:</p>
-                            <p>{maxCal}kcal</p>
+                            <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
+                                <span>Daily Goal</span>
+                                <span className="text-slate-700">{maxCal} kcal</span>
+                            </div>
                         </div>
 
                         {/* Progress Bar */}
-                        <div className="w-full mt-4">
-                        <div className="h-4 bg-gray-300 rounded-full overflow-hidden">
-                            <div
-                            className={`h-full bg-green-500 transition-all duration-500`}
-                            style={{
-                                width: `${Math.min((totalCal / maxCal) * 100, 100)}%`,
-                            }}
-                            ></div>
+                        <div>
+                            <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-green-500 transition-all duration-500"
+                                    style={{
+                                        width: `${Math.min((totalCal / maxCal) * 100, 100)}%`,
+                                    }}
+                                ></div>
+                            </div>
+                            <p className="text-sm text-gray-600 text-right mt-1">
+                                {Math.min((totalCal / maxCal) * 100, 100).toFixed(1)}% of your daily goal
+                            </p>
                         </div>
-                        <p className="text-right text-sm text-gray-600 mt-1">
-                            {Math.min((totalCal / maxCal) * 100, 100).toFixed(1)}% of your goal
-                        </p>
+
+                        {/* Button */}
+                        <div className="text-right">
+                            <button
+                                onClick={handleFinishEating}
+                                className="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-full shadow-md transition"
+                            >
+                                Finish Eating for Today
+                            </button>
                         </div>
                     </div>
                 </section>
+
                 
                 {/* CALORIE GOAL SECTION */}
                 <section className="bg-slate-100 p-6 rounded-xl shadow mb-8">
