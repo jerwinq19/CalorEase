@@ -100,38 +100,47 @@ const RecipeCard = ({name, image, id, idx}) => {
     // return
     return(
         <div className="w-full max-w-sm mx-auto">
-            <div className="flex flex-col justify-between shadow-lg rounded-2xl overflow-hidden h-[370px] bg-white transition hover:shadow-xl duration-300">
-                <img
-                src={image}
-                alt={name}
-                onError={(err) => {
-                    err.target.onerror = null;
-                    err.target.src = "https://placehold.co/600x400";
-                    console.log(`Image error: ${name}`);
-                }}
-                className="h-48 w-full object-cover"
-                />
-
-                <div className="flex flex-col justify-between flex-grow px-5 py-4">
-                <h2 className="text-lg font-bold text-gray-800 mb-3 line-clamp-2">{name}</h2>
-
-                <div className="flex justify-between mt-auto">
-                    <button
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-2 rounded-lg transition"
-                    onClick={() => AddtoCalorie(id)}
-                    >
-                    Add to Tracker ✅
-                    </button>
-
-                    <button
-                    className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-3 py-2 rounded-lg transition"
-                    onClick={() => ViewRecipe(id)}
-                    >
-                    View Recipe 🔍
-                    </button>
+            <div className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md hover:-translate-y-1 duration-300">
+                {/* Image */}
+                <div className="relative">
+                    <img
+                    src={image}
+                    alt={name}
+                    onError={(err) => {
+                        err.target.onerror = null;
+                        err.target.src = "https://placehold.co/600x400?text=No+Image";
+                        console.log(`Image error: ${name}`);
+                    }}
+                    className="h-48 w-full object-cover"
+                    />
                 </div>
+
+                {/* Content */}
+                <div className="flex flex-col justify-between flex-grow p-5">
+                    {/* Title */}
+                    <h2 className="text-gray-800 font-semibold text-base md:text-lg leading-tight mb-4 line-clamp-2">
+                    {name}
+                    </h2>
+
+                    {/* Buttons */}
+                    <div className="flex gap-3 mt-auto">
+                    <button
+                        onClick={() => AddtoCalorie(id)}
+                        className="flex-1 bg-gray-100 text-gray-700 text-sm font-medium py-2 rounded-full hover:bg-gray-200 transition"
+                    >
+                        Add to Tracker
+                    </button>
+                    <button
+                        onClick={() => ViewRecipe(id)}
+                        className="flex-1 bg-green-500 text-white text-sm font-medium py-2 rounded-full hover:bg-green-600 transition"
+                    >
+                        View Recipe
+                    </button>
+                    </div>
                 </div>
             </div>
+
+
 
             {showModal && recipeInfo && (
                 <Modal setShowModal={setShowModal}>

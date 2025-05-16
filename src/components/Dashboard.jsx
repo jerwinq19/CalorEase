@@ -335,28 +335,27 @@ const DashBoard = () => {
                     <div className="max-w-7xl mx-auto">
                         {/* Header */}
                         <div className="mb-10 text-center">
-                        <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 via-green-500 to-purple-500 bg-clip-text text-transparent animate-gradient">
-                            Health Analytics Overview
-                        </h1>
-                        <p className="mt-2 text-gray-500">Track your performance and body progress over time</p>
-                        <div className="w-16 h-1 bg-blue-500 mx-auto mt-4 rounded-full" />
-                        </div>
+                            <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 via-green-500 to-purple-500 bg-clip-text text-transparent animate-gradient">
+                                Health Analytics Overview
+                            </h1>
+                            <p className="mt-2 text-gray-500">Track your performance and body progress over time</p>
+                        <div className="w-16 h-1 bg-blue-500 mx-auto mt-4 rounded-full" /></div>
 
                         {/* Top: Calorie chart (full width) */}
                         <div className="mb-6">
-                        <div className="hover:scale-[1.02] transition-transform duration-300">
-                            <CaloriesChart data={calorieData} />
-                        </div>
-                        </div>
+                            <div className="hover:scale-[1.02] transition-transform duration-300">
+                                <CaloriesChart data={calorieData} />
+                            </div>
+                            </div>
 
                         {/* Bottom: Streak + Weight charts */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="hover:scale-[1.02] transition-transform duration-300">
-                            <StreakChart data={streakData} />
-                        </div>
-                        <div className="hover:scale-[1.02] transition-transform duration-300">
-                            <WeightChart data={weightData} />
-                        </div>
+                            <div className="hover:scale-[1.02] transition-transform duration-300">
+                                <StreakChart data={streakData} />
+                            </div>
+                            <div className="hover:scale-[1.02] transition-transform duration-300">
+                                <WeightChart data={weightData} />
+                            </div>
                         </div>
                     </div>
                 </section>

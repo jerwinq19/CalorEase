@@ -9,6 +9,7 @@ body {
 
 .guide-wrapper {
     max-width: 900px;
+    padding: 15px;
     margin: auto;
     color: #344E41;
 }
@@ -295,6 +296,10 @@ body {
     .neat-subcard-container {
         flex-direction: row;
     }
+
+    .guide-wrapper {
+        padding: 15px;
+    }
 }
 
 @media (min-width: 768px) {
@@ -305,6 +310,9 @@ body {
 
     .tdee-text {
         margin-bottom: 2rem;
+    }
+    .guide-wrapper {
+        padding: 15px;
     }
 }
 

@@ -1,5 +1,5 @@
 //FOOD SEARCH PAGE
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import '../style/recipeSearchStyle.css'
 import axios from "axios";
 import RecipeCard from "./calorieInfo";
@@ -42,13 +42,20 @@ const SearchRecipe = () => {
     // calculations
     const lastIndex = currentPage * postPerPage
     const startIndex = lastIndex - postPerPage
-    const currentPost = Recipes.slice(startIndex, lastIndex)
+    const currentPost = Recipes.slice(startIndex, lastIndex) 
+
 
 
     // handlers
     const formattedInput = (input) => {
         return input.trim().split(" ").join("+")
     }
+
+    useEffect(() => {
+        
+    }, [])
+
+
 
     const FetchRecipe = async (query) => {
 
@@ -90,8 +97,6 @@ const SearchRecipe = () => {
                 if (stored && (now - lastFetched < ONE_DAY)) {
                     const parsed = JSON.parse(stored);
                     setRecipes(parsed);
-                    console.log("recipe already stored")
-                    console.log(parsed)
                     return;
                 }
 
