@@ -4,6 +4,7 @@ import '../style/recipeSearchStyle.css'
 import axios from "axios";
 import RecipeCard from "./calorieInfo";
 import MyNavbar from "./navBar";
+import Swal from "sweetalert2";
 
 const PaginationMeals = ({totalPost, postPerPage, setCurrentPage}) => {
     let pages = []
@@ -58,29 +59,49 @@ const SearchRecipe = () => {
 
 
     const FetchRecipe = async (query) => {
-
-        if (!query) return; // returns when no input 
+            if (!query) return; // return early when no input
         
-        const cacheKey = `recipe_${query.toLowerCase()}` // create a key
-        const cached = localStorage.getItem(cacheKey) // access it to the local db to save api calls and prevent limits
-
-        if (cached) {
-            return setRecipes(JSON.parse(cached))
-        }
-
-        const formatInput = formattedInput(query)
-
-        try {
-            const response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch?query=${formatInput}&includeNutrition=true&number=40&apiKey=${process.env.REACT_APP_API_KEY}`)
-
-            setRecipes(response.data.results)
-            localStorage.setItem(cacheKey, JSON.stringify(response.data.results))
-
-        } catch (err) {
-            console.error(`Opss.. Error there must have been a error in fetching the Data. \n ${err}`)
-        }
-    }
-
+            const cacheKey = `recipe_${query.toLowerCase()}`; // create a key
+            const cached = localStorage.getItem(cacheKey); // access local storage
+        
+            if (cached) {
+            return setRecipes(JSON.parse(cached));
+            }
+        
+            const formatInput = formattedInput(query);
+        
+            try {
+            const response = await axios.get(
+                `https://api.spoonacular.com/recipes/complexSearch?query=${formatInput}&includeNutrition=true&number=40&apiKey=${process.env.REACT_APP_API_KEY}`
+            );
+        
+            const results = response.data.results;
+        
+            if (results.length === 0) {
+                console.warn("No recipes found for the query:", query);
+                setRecipes([]);
+            
+                Swal.fire({
+                    title: "No Recipes Found",
+                    text: `We couldn't find any recipes for "${query}". Try a different food item.`,
+                    icon: "info",
+                    confirmButtonText: "OK",
+                }).then(() => {
+                  window.location.reload(); // Refresh after user clicks OK
+                });
+            
+                return;
+            }
+            
+        
+            setRecipes(results);
+            localStorage.setItem(cacheKey, JSON.stringify(results));
+            console.log(results);
+            } catch (err) {
+            console.error(`Oops.. There was an error fetching the data.\n${err}`);
+            }
+        };
+        
     // generate random recipe
     useEffect(() => {
         const RandomRecipe = async () => {

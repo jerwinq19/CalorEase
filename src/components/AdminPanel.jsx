@@ -263,8 +263,9 @@ const AdminPanel = () => {
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-4xl font-bold text-gray-800 mb-8">👨‍💻 Admin Dashboard</h1>
-
-            <button onClick={() => addingDummyAcc()}>Add dummy accounts</button>
+            <div className="">
+              <button onClick={() => addingDummyAcc()}>Add dummy accounts</button>
+            </div>
 
             {/* Users Table */}
             <div className="bg-white shadow-md rounded-xl overflow-hidden">

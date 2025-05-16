@@ -213,13 +213,11 @@ const DashBoard = () => {
             if (result.isConfirmed) {
                 currentUserData.eatenFood = [];
     
-                // ✅ Add today's calorie data if not already logged
                 const alreadyLoggedCalories = currentUserData.analytics.calories.some(c => c.date === currentDate);
                 if (!alreadyLoggedCalories) {
                     currentUserData.analytics.calories.push(calorieData);
                 }
     
-                // ✅ Estimate and store weight if not already logged
                 const weightHistory = currentUserData.analytics.weight || [];
                 const alreadyLoggedWeight = weightHistory.some(w => w.date === currentDate);
                 if (!alreadyLoggedWeight) {
@@ -238,7 +236,6 @@ const DashBoard = () => {
                     currentUserData.weight = newWeight; // optional: store latest weight
                 }
     
-                // ✅ Streak logic
                 const streaks = currentUserData.analytics.streaks || [];
                 const alreadyLoggedStreak = streaks.some(s => s.date === currentDate);
     

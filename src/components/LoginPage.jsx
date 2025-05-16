@@ -19,7 +19,9 @@ const LoginPage = () => {
     }
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault()
+    
     const accountsData = JSON.parse(localStorage.getItem("Accounts")) || [];
   
     const matchedUser = accountsData.find(
@@ -46,6 +48,7 @@ const LoginPage = () => {
       });
       setUsername("");
       setPassword("");
+      
     }
   };
   
