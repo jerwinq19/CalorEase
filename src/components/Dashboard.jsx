@@ -34,15 +34,15 @@ const DashBoard = () => {
                 const currentUserData = allAccounts[currentUserIndex];
     
                 const userData = {
-                    weight: Number(currentUserData.weight),
-                    targetWeight: Number(currentUserData.targetWeight),
-                    timeframe: Number(currentUserData.timeFrame),
-                    activity: currentUserData.activityLevel,
+                    weight: Number(currentUserData?.weight ?? 0),
+                    targetWeight: Number(currentUserData?.targetWeight ?? 0),
+                    timeframe: Number(currentUserData?.timeFrame ?? 0),
+                    activity: currentUserData?.activityLevel ?? "Sedentary",
                     age: 20,
                     height: 172.72,
-                    gender: currentUserData.gender.toLowerCase(),
-                    dietPref: currentUserData.dietPref
-                }
+                    gender: currentUserData?.gender?.toLowerCase() ?? "male",
+                    dietPref: currentUserData?.dietPref ?? "None"
+                };
     
                 const maxCalorie = calculateMaxCalorie(userData);
 
