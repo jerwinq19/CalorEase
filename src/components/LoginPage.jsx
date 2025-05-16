@@ -12,7 +12,7 @@ const LoginPage = () => {
 
     if (accountsData === null) {
       const defaultAcc = [
-        { id: 1, username: "test", password: "test123" }
+        { id: 1, username: "admin", password: "admin" }
       ];
       localStorage.setItem("Accounts", JSON.stringify(defaultAcc));
       alert("Local storage created with default account.");
@@ -21,18 +21,23 @@ const LoginPage = () => {
 
   const handleLogin = () => {
     const accountsData = JSON.parse(localStorage.getItem("Accounts")) || [];
-
+  
     const matchedUser = accountsData.find(
       (user) =>
         user.username === username.trim() &&
         user.password === password.trim()
     );
-
+  
     if (matchedUser) {
       localStorage.setItem("CurrentUserId", matchedUser.id);
       localStorage.setItem("CurrentUsername", matchedUser.username);
-        
-      navigate("/dashboard");
+  
+      // Check if admin
+      if (matchedUser.username.toLowerCase() === "admin") {
+        navigate("/admin");  // Redirect admin here
+      } else {
+        navigate("/dashboard");        // Redirect normal users here
+      }
     } else {
       Swal.fire({
         title: "No user found.",
@@ -43,12 +48,7 @@ const LoginPage = () => {
       setPassword("");
     }
   };
-
-  // 🔑 Handle form submission (including Enter key)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleLogin();
-  };
+  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -66,7 +66,7 @@ const LoginPage = () => {
         </h1>
 
         {/* ✅ Use form with onSubmit */}
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-4" onSubmit={handleLogin}>
           <input
             type="text"
             placeholder="Username"

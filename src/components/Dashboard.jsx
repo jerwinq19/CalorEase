@@ -49,7 +49,7 @@ const DashBoard = () => {
                 console.log(currentUserData)
                 setCalorieData(currentUserData.analytics.calories)
                 setStreakData(currentUserData.analytics.streaks)
-                setWeightData()
+                setWeightData(currentUserData.analytics.weight)
                 setDefaultData(userData);
 
                 const sampleData = await fetchRecomended({ diet: currentUserData.dietPref, maxcal: maxCalorie });
@@ -74,6 +74,13 @@ const DashBoard = () => {
     }, [change]);
     
     const fetchRecomended = async ({ diet, maxcal }) => {
+        const cacheKey = `recommended-${diet}-${maxcal}`;
+        const cached = localStorage.getItem(cacheKey);
+    
+        if (cached) {
+            return JSON.parse(cached);
+        }
+    
         try {
             const response = await axios.get(`https://api.spoonacular.com/recipes/complexSearch`, {
                 params: {
@@ -87,13 +94,16 @@ const DashBoard = () => {
     
             const meals = response.data.results;
     
-            // Optional: filter meals under max calories
             const filteredMeals = meals.filter(item => {
                 const cal = item.nutrition?.nutrients?.find(n => n.name === "Calories")?.amount;
                 return cal && cal <= maxcal;
             });
     
             const shuffled = filteredMeals.sort(() => Math.random() - 0.5);
+    
+            // Store result in localStorage
+            localStorage.setItem(cacheKey, JSON.stringify(shuffled));
+    
             return shuffled;
         } catch (err) {
             console.error("API error:", err);
@@ -160,82 +170,117 @@ const DashBoard = () => {
 
 
     const handleFinishEating = () => {
-            const allAccounts = JSON.parse(localStorage.getItem('Accounts')) || [];
-            const currentUserId = localStorage.getItem('CurrentUserId');
-            const currentUserIndex = allAccounts.findIndex(user => user.id === currentUserId);
-            const currentUserData = allAccounts[currentUserIndex];
-
-            const currentDate = new Date().toISOString().split("T")[0]; // Use YYYY-MM-DD
-
-            const calorieData = {
-                date: currentDate,
-                totalCalorieThatDay: Math.min(totalCal, maxCal < totalCal ? totalCal : maxCal)
-            }  
-
+        const allAccounts = JSON.parse(localStorage.getItem('Accounts')) || [];
+        const currentUserId = localStorage.getItem('CurrentUserId');
+        const currentUserIndex = allAccounts.findIndex(user => user.id === currentUserId);
+    
+        if (currentUserIndex === -1) {
             Swal.fire({
-                title: "Finish your day?",
-                text: "Do you want to save today's calorie data?",
-                icon: "question",
-                showDenyButton: true,
-                showCancelButton: true,
-                confirmButtonText: "✅ Save",
-                denyButtonText: "❌ Don't Save",
-                cancelButtonText: "Back",
-                confirmButtonColor: "#28a745",  // green
-                denyButtonColor: "#dc3545",     // red
-                cancelButtonColor: "#6c757d",   // gray
-                reverseButtons: true,
-                customClass: {
-                    popup: 'swal2-border-radius-lg'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    currentUserData.eatenFood = [];
-                    currentUserData.analytics.calories.push(calorieData);
-                    localStorage.setItem('Accounts', JSON.stringify(allAccounts));
-                    isChange(prev => !prev);
-            
-                    Swal.fire({
-                        title: "Day Completed!",
-                        text: "Your calorie intake has been logged. See you tomorrow!",
-                        icon: "success",
-                        confirmButtonColor: "#28a745"
-                    });
-                } else if (result.isDenied) {
-                    Swal.fire({
-                        title: "Not saved",
-                        text: "Your changes were not saved.",
-                        icon: "info",
-                        confirmButtonColor: "#6c757d"
-                    });
-                }
+                title: "Error",
+                text: "User not found.",
+                icon: "error"
             });
-
-            const streaks = currentUserData.analytics.streaks || [];
-            const last = streaks.at(-1); // gets last element
-            const alreadyLogged = streaks.some(s => s.date === currentDate);
-
-            if (!alreadyLogged) {
-            let newStreak = 1;
-
-            if (last) {
-                const lastDate = new Date(last.date);
-                const current = new Date(currentDate);
-
-                // Check if the last date is exactly yesterday
-                lastDate.setDate(lastDate.getDate() + 1);
-                const isConsecutive = lastDate.toDateString() === current.toDateString();
-
-                if (isConsecutive) {
-                newStreak = (last.streak || 1) + 1;
+            return;
+        }
+    
+        const currentUserData = allAccounts[currentUserIndex];
+        const currentDate = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    
+        const calorieData = {
+            date: currentDate,
+            totalCalorieThatDay: Math.min(totalCal, maxCal < totalCal ? totalCal : maxCal)
+        };
+    
+        Swal.fire({
+            title: "Finish your day?",
+            text: "Do you want to save today's calorie data?",
+            icon: "question",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "✅ Save",
+            denyButtonText: "❌ Don't Save",
+            cancelButtonText: "Back",
+            confirmButtonColor: "#28a745",
+            denyButtonColor: "#dc3545",
+            cancelButtonColor: "#6c757d",
+            reverseButtons: true,
+            customClass: {
+                popup: 'swal2-border-radius-lg'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                currentUserData.eatenFood = [];
+    
+                // ✅ Add today's calorie data if not already logged
+                const alreadyLoggedCalories = currentUserData.analytics.calories.some(c => c.date === currentDate);
+                if (!alreadyLoggedCalories) {
+                    currentUserData.analytics.calories.push(calorieData);
                 }
+    
+                // ✅ Estimate and store weight if not already logged
+                const weightHistory = currentUserData.analytics.weight || [];
+                const alreadyLoggedWeight = weightHistory.some(w => w.date === currentDate);
+                if (!alreadyLoggedWeight) {
+                    const lastWeightEntry = weightHistory.at(-1);
+                    const lastWeight = lastWeightEntry?.weight || currentUserData.weight || 65;
+                    const calorieDifference = totalCal - maxCal;
+                    const estimatedWeightChange = calorieDifference / 7700;
+                    const newWeight = parseFloat((lastWeight + estimatedWeightChange).toFixed(2));
+    
+                    weightHistory.push({
+                        date: currentDate,
+                        weight: newWeight
+                    });
+    
+                    currentUserData.analytics.weight = weightHistory;
+                    currentUserData.weight = newWeight; // optional: store latest weight
+                }
+    
+                // ✅ Streak logic
+                const streaks = currentUserData.analytics.streaks || [];
+                const alreadyLoggedStreak = streaks.some(s => s.date === currentDate);
+    
+                if (!alreadyLoggedStreak) {
+                    const last = streaks.at(-1);
+                    let newStreak = 1;
+    
+                    if (last) {
+                        const lastDate = new Date(last.date);
+                        const today = new Date(currentDate);
+    
+                        lastDate.setDate(lastDate.getDate() + 1);
+                        const isConsecutive = lastDate.toDateString() === today.toDateString();
+    
+                        newStreak = isConsecutive ? (last.streak || 1) + 1 : 1;
+                    }
+    
+                    streaks.push({ date: currentDate, streak: newStreak });
+                    currentUserData.analytics.streaks = streaks;
+                }
+    
+                // ✅ Save to localStorage
+                allAccounts[currentUserIndex] = currentUserData;
+                localStorage.setItem('Accounts', JSON.stringify(allAccounts));
+                isChange(prev => !prev);
+    
+                Swal.fire({
+                    title: "Day Completed!",
+                    text: "Your calorie intake and weight have been logged. See you tomorrow!",
+                    icon: "success",
+                    confirmButtonColor: "#28a745"
+                });
+    
+            } else if (result.isDenied) {
+                Swal.fire({
+                    title: "Not saved",
+                    text: "Your changes were not saved.",
+                    icon: "info",
+                    confirmButtonColor: "#6c757d"
+                });
             }
-
-            streaks.push({ date: currentDate, streak: newStreak });
-            }
-
-            
+        });
     };
+    
 
     return(
         <>

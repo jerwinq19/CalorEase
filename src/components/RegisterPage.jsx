@@ -52,8 +52,8 @@ const RegisterPage = () => {
             // Analytics / Logs
             analytics: {
                 calories: [],
-                weight: [],
-                streaks: []
+                streaks: [],
+                weight: []
             }
         };
         
