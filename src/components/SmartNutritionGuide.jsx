@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
 import MyNavbar from "./navBar";
+import Target from '../image/target.jpg'
+
+
 function SmartNutrition() {
     return (
         
@@ -28,7 +31,7 @@ function SmartNutrition() {
                             </p>
                         </div>
                         <div className="energy-unit">
-                            <img src="/target.png" alt="Energy Unit" className="energy-icon" />
+                            <img src={Target} alt="Energy Unit" className="energy-icon" />
                             <p>Energy Unit</p>
                         </div>
                     </div>

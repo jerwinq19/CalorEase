@@ -25,7 +25,7 @@ const DashBoard = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        const fetchCalories = async () => {
+        const fetchCalories =  async () => {
             try {
                 const allAccounts = JSON.parse(localStorage.getItem('Accounts')) || [];
                 const currentUserId = localStorage.getItem('CurrentUserId');
@@ -91,7 +91,8 @@ const DashBoard = () => {
                     sort: "random",
                 },
             });
-    
+            
+            console.log("tite")
             const meals = response.data.results;
     
             const filteredMeals = meals.filter(item => {
@@ -166,6 +167,7 @@ const DashBoard = () => {
         
     const onUpdateGoal = () => {
         setShowModal(true)
+        isChange(true)
     } 
 
 
@@ -457,14 +459,14 @@ const DashBoard = () => {
                             );
                         })
                         ) : (
-                        <p className="text-gray-500 italic col-span-full text-center">No recommendations available yet.</p>
+                            <p className="text-gray-500 italic col-span-full text-center">No recommendations available yet.</p>
                         )}
                     </div>
                 </section>
 
 
                 {showModal && (
-                    <Modal setShowModal={setShowModal} title={'Updatae Goal'} size="xl"   closeOnBackdrop={true}>
+                    <Modal setShowModal={setShowModal} title={'Update Goal'} size="xl"   closeOnBackdrop={true}>
                         <UpdateHealthGoal maxCalories={maxCal} defaultData={defaultData}/>
                     </Modal>
                 )}

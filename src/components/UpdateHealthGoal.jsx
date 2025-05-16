@@ -53,8 +53,6 @@ const UpdateHealthGoal = ({ maxCalories, defaultData }) => {
                     return Swal.fire("Changes are not saved", "", "info");
                 }
                 });
-
-            
         }
     };
 

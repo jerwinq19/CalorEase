@@ -163,36 +163,6 @@ const AdminPanel = () => {
         localStorage.setItem("Accounts", JSON.stringify(updatedData));
     }
 
-    const saveToLocalStorage = (updatedAccounts) => {
-        localStorage.setItem("Accounts", JSON.stringify(updatedAccounts));
-        setAccounts(updatedAccounts);
-    };
-
-    const handleDelete = (id) => {
-        const updated = accounts.filter((acc) => acc.id !== id);
-        saveToLocalStorage(updated);
-    };
-
-    const handleAddUser = () => {
-        const trimmedUsername = newUser.username.trim();
-        const trimmedPassword = newUser.password.trim();
-
-        if (!trimmedUsername || !trimmedPassword) {
-        alert("Username and password are required.");
-        return;
-        }
-
-        const newId =
-        accounts.length > 0
-            ? Math.max(...accounts.map((acc) => acc.id)) + 1
-            : 1;
-        const newAccount = { id: newId, ...newUser };
-        const updated = [...accounts, newAccount];
-
-        saveToLocalStorage(updated);
-        setNewUser({ username: "", password: "" });
-    };
-
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
             <h1 className="text-4xl font-bold text-gray-800 mb-8">👨‍💻 Admin Dashboard</h1>
@@ -224,7 +194,6 @@ const AdminPanel = () => {
                             <td className="px-6 py-4">{acc.password}</td>
                             <td className="px-6 py-4">
                             <button
-                                onClick={() => handleDelete(acc.id)}
                                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm transition"
                             >
                                 Delete
