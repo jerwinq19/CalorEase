@@ -1,54 +1,36 @@
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
+import { getFirestore, collection, getDocs, doc } from "firebase/firestore";
+import { auth } from "../firebase/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const db = getFirestore()
 
-  useEffect(() => {
-    const accountsData = JSON.parse(localStorage.getItem("Accounts"));
 
-    if (accountsData === null) {
-      const defaultAcc = [
-        { id: 1, username: "admin", password: "admin" }
-      ];
-      localStorage.setItem("Accounts", JSON.stringify(defaultAcc));
-      alert("Local storage created with default account.");
-    }
-  }, []);
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-    
-    const accountsData = JSON.parse(localStorage.getItem("Accounts")) || [];
-  
-    const matchedUser = accountsData.find(
-      (user) =>
-        user.username === username.trim() &&
-        user.password === password.trim()
-    );
-  
-    if (matchedUser) {
-      localStorage.setItem("CurrentUserId", matchedUser.id);
-      localStorage.setItem("CurrentUsername", matchedUser.username);
-  
-      // Check if admin
-      if (matchedUser.username.toLowerCase() === "admin") {
-        navigate("/admin");  // Redirect admin here
-      } else {
-        navigate("/dashboard");        // Redirect normal users here
-      }
-    } else {
+    try{
+      const userCreds = await signInWithEmailAndPassword(auth, username, password)
+      const user = userCreds.user
+
+      console.log("logged in:", user.email, user.uid)
       Swal.fire({
-        title: "No user found.",
-        text: "It seems that user doesn't exist in our database.",
-        icon: "warning",
-      });
-      setUsername("");
-      setPassword("");
-      
+        title: "Success!",
+        text: "Logged in Successfully!",
+        icon: "success"
+      })
+      setUsername("")
+      setPassword("")
+      navigate("/dashboard"); 
+    } catch(error) {
+      console.error(error)
+
     }
   };
   
@@ -72,7 +54,7 @@ const LoginPage = () => {
         <form className="flex flex-col gap-4" onSubmit={handleLogin}>
           <input
             type="text"
-            placeholder="Username"
+            placeholder="Email"
             className="p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
             value={username}
             onChange={(e) => setUsername(e.target.value)}

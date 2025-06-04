@@ -1,9 +1,12 @@
 import { Link, useNavigate} from "react-router-dom";
 import { useState } from "react";
-import { nanoid } from "nanoid";
+import { getFirestore, setDoc, doc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import {app, auth} from "../firebase/firebase";
 import Swal from "sweetalert2";
 
 const RegisterPage = () => {
+    const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [weight, setWeight] = useState("");
@@ -14,10 +17,12 @@ const RegisterPage = () => {
     const [gender, setGender] = useState("");
     const [age, setAge] = useState("");
     const [height, setHeight] = useState("");
-
     const navigate = useNavigate()
 
-    const handleRegister = () => {
+    // instance of firebase db
+    const db = getFirestore(app)
+
+    const handleRegister = async () => {
         if (
             !username.trim() || !password.trim() ||
             weight === "" || targetWeight === "" || timeFrame === "" ||
@@ -30,39 +35,34 @@ const RegisterPage = () => {
                 icon: "warning"
             });
         }
-
-        const AccountData = {
-            id: nanoid(),
-            username: username.trim(),
-            password: password.trim(),
-        
-            // Profile & Preferences
-            weight: Number(weight),
-            targetWeight: Number(targetWeight),
-            timeFrame: Number(timeFrame),
-            activityLevel,
-            dietPref,
-            gender,
-            age: Number(age),
-            height: Number(height),
-        
-            // Food & Goals
-            eatenFood: [],
-        
-            // Analytics / Logs
-            analytics: {
-                calories: [],
-                streaks: [],
-                weight: []
-            }
-        };
         
 
-        const accounts = JSON.parse(localStorage.getItem("Accounts")) || [];
-        accounts.push(AccountData);
-        localStorage.setItem("Accounts", JSON.stringify(accounts));
+        try {
+            const userCreds = await createUserWithEmailAndPassword(auth, email, password)
+            const user = userCreds.user
 
-        // Clear form
+            // store user data
+            await setDoc(doc(db, "users", user.uid), {
+                email: email,
+                username: username,
+                weight: weight,
+                target_weight: targetWeight,
+                time_frame: timeFrame,
+                activity_level: activityLevel,
+                diet_pref: dietPref,
+                sex: gender,
+                height: height,
+                age: age,
+                eatenfood: [],
+                user_analytics: [],
+                added_meal_history: [],
+            });
+            console.log("success")
+            console.log("Registered:", user.email);
+        } catch (error) {
+            console.error(error)
+        }
+
         setUsername("");
         setPassword("");
         setWeight(0);
@@ -80,6 +80,7 @@ const RegisterPage = () => {
             icon: "success"
         });
         navigate("/")
+
     };
 
     return (
@@ -93,6 +94,18 @@ const RegisterPage = () => {
                 <h1 className="text-3xl font-bold text-center text-green-600 mb-6">Join CalorEase</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <label className="text-sm font-medium">
+                    Email
+                    <input
+                        type="email"
+                        placeholder="Email address"
+                        className="mt-1 p-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-green-400"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                </label>
+
+
                     <label className="text-sm font-medium">
                         Username
                         <input

@@ -1,6 +1,6 @@
 import './App.css';
 import './style/SmartNutrition.css'
-import { Route, Routes, Link } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import SearchRecipe from './components/mealSearch';
 import LoginPage from './components/LoginPage';
 import DashBoard from './components/Dashboard';
@@ -10,7 +10,6 @@ import UpdateHealthGoal from './components/UpdateHealthGoal';
 import LandingPage from './components/LandingPage';
 import SmartNutrition from './components/SmartNutritionGuide';
 import AnalyticsDashboard from './components/test';
-import AdminPanel from './components/AdminPanel';
 
 function App() {
   //LANDING PAGE
@@ -26,7 +25,6 @@ function App() {
         <Route path='/smartnutrition' element={<SmartNutrition />} />
         <Route path='/register' element={<RegisterPage/>}/>
         <Route path='/test' element={<AnalyticsDashboard />}/>
-        <Route path='/admin' element={<AdminPanel />}/>
         <Route path='*' element={<NotFound/>} />
       </Routes>
     </div>

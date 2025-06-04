@@ -87,7 +87,7 @@ const SearchRecipe = () => {
                     icon: "info",
                     confirmButtonText: "OK",
                 }).then(() => {
-                  window.location.reload(); // Refresh after user clicks OK
+                    window.location.reload(); 
                 });
             
                 return;
@@ -106,13 +106,10 @@ const SearchRecipe = () => {
     useEffect(() => {
         const RandomRecipe = async () => {
             try {
-                // hours
                 const ONE_DAY = 24 * 60 * 60 * 1000
                 const now = Date.now()
 
-                // store last fetched
                 const lastFetched = parseInt(localStorage.getItem("random_last_fetched") || 0)
-                // create or load the local storage 
                 const stored = localStorage.getItem("random_recipe");
 
                 if (stored && (now - lastFetched < ONE_DAY)) {
@@ -121,16 +118,13 @@ const SearchRecipe = () => {
                     return;
                 }
 
-                // fetch the api 
                 const response = await axios.get(`https://api.spoonacular.com/recipes/random?includeNutrition=true&number=60&apiKey=${process.env.REACT_APP_API_KEY}`)
                 console.log(`recipe saved to the local storage...`, response.data.recipes)
 
-                // append to the local storage
-                setRecipes(response.data.recipes); // set to state
+                setRecipes(response.data.recipes); 
 
-                // save to the local storage the loaded random recipes
                 localStorage.setItem("random_recipe", JSON.stringify(response.data.recipes))
-                localStorage.setItem("random_last_fetched", now.toString()) // set time
+                localStorage.setItem("random_last_fetched", now.toString()) 
 
 
             } catch (ero) {

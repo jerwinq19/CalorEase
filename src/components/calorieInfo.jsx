@@ -1,14 +1,21 @@
 //FOOD CARD
 import axios from "axios";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import '../style/modal.css'
 import Modal from "../modal/modal";
 import Swal from "sweetalert2";
+import { nanoid } from "nanoid";
+import { getFirestore, doc, getDoc, updateDoc} from "firebase/firestore";
+import { auth } from "../firebase/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+
 
 const RecipeCard = ({name, image, id, idx}) => {
 
     const [showModal, setShowModal] = useState(false);
     const [recipeInfo, setRecipeInfo] = useState(null);
+    const db = getFirestore()
+
 
     const ViewRecipe = async (id) => {
 
@@ -45,56 +52,66 @@ const RecipeCard = ({name, image, id, idx}) => {
     const AddtoCalorie = async (id) => {
         try {
             const response = await axios.get(
-            `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=true&apiKey=${process.env.REACT_APP_API_KEY}`
+                `https://api.spoonacular.com/recipes/${id}/information?includeNutrition=true&apiKey=${process.env.REACT_APP_API_KEY}`
             );
-        
-            const mealCalorie = response.data;
-        
-            const allAccounts = JSON.parse(localStorage.getItem('Accounts')) || [];
-            const currentUserId = localStorage.getItem('CurrentUserId');
-        
-            const currentUserIndex = allAccounts.findIndex(user => user.id === currentUserId);
-        
-            if (currentUserIndex !== -1) {
-                const currentUser = allAccounts[currentUserIndex];
-            
-                const alreadyAdded = currentUser.eatenFood.some(meal => meal.id === mealCalorie.id);
-            
-                if (alreadyAdded) {
-                    Swal.fire({
-                    title: "Already Added!",
-                    text: `${mealCalorie.title} is already in your list.`,
-                    icon: "info"
-                    });
-                    return;
-                }
-                
-                const newMeal = {
-                    id: mealCalorie.id,
-                    name: mealCalorie.title,
-                    kcal: mealCalorie.nutrition.nutrients[0].amount
-                };
-
-                
-                currentUser.eatenFood.push(newMeal);
-            
-                localStorage.setItem('Accounts', JSON.stringify(allAccounts));
-            
+    
+            const mealCalorie = response.data.nutrition.nutrients[0];
+            const mealTitle = response.data.title;
+    
+            const CalorieData = {
+                id: nanoid(),
+                mealName: mealTitle,
+                calorie: mealCalorie.amount,
+                created_at: new Date().toLocaleTimeString(),
+            };
+    
+            const user = auth.currentUser;  // <---- get current user immediately
+    
+            if (!user) {
                 Swal.fire({
-                    title: "Calorie Added!",
-                    text: `${mealCalorie.title} is added!`,
-                    icon: "success"
+                    title: "No user is signed in",
+                    text: "No user is currently signed in.",
+                    timer: 1500,
+                    icon: "error",
                 });
+                return;
             }
+    
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+    
+            if (!userSnap.exists()) {
+                Swal.fire({
+                    title: "Warning",
+                    text: "No user data found",
+                    timer: 2000,
+                    icon: "error",
+                });
+                return;
+            }
+    
+            const data = userSnap.data();
+            const updatedEatenFood = Array.isArray(data.eatenfood) ? [...data.eatenfood] : [];
+            updatedEatenFood.push(CalorieData);
+    
+            await updateDoc(userRef, { eatenfood: updatedEatenFood });
+    
+            Swal.fire({
+                title: "Success",
+                text: "Meal added to your calorie tracker!",
+                timer: 1500,
+                icon: "success",
+            });
         } catch (error) {
             console.error("Error adding calorie:", error);
             Swal.fire({
-            title: "Error",
-            text: "Something went wrong while adding the meal.",
-            icon: "error"
+                title: "Error",
+                text: "Something went wrong while adding the meal.",
+                icon: "error",
             });
         }
     };
+    
     
 
     // return
